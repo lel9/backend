@@ -1,10 +1,9 @@
 package testsystem.domain;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 import lombok.*;
+import testsystem.dto.UserDTO;
 
 import java.util.UUID;
 
@@ -19,19 +18,17 @@ public class User {
     @GeneratedValue
     private final UUID id = UUID.randomUUID();
 
-    @NotNull
-    @NotEmpty
     private String username;
 
-    @NotNull
-    @NotEmpty
     private String email;
 
-    @NotNull
-    @NotEmpty
     private String password_hash;
 
     @Enumerated(EnumType.STRING)
     private final UserRole role = UserRole.USER;
+
+    public static User fromUserDTO(UserDTO userDTO) {
+        return new User(userDTO.getUsername(), userDTO.getEmail(), userDTO.getPassword());
+    }
 
 }
