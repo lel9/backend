@@ -1,7 +1,8 @@
 package testsystem.dto;
 
-import lombok.*;
-import testsystem.validator.PasswordMatches;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -10,12 +11,12 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor(access=AccessLevel.PRIVATE, force=true)
-@PasswordMatches
 public class UserDTO {
 
-    public UserDTO(String username, String email) {
+    public UserDTO(String username, String email, String role) {
         this.username = username;
         this.email = email;
+        this.role = role;
     }
 
     @NotNull
@@ -31,8 +32,6 @@ public class UserDTO {
     @NotEmpty
     private String password;
 
-    @NotNull
-    @NotEmpty
-    private String confirmPassword;
+    private String role;
 
 }

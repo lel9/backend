@@ -22,7 +22,7 @@ public class RegistrationController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserDTO signUp(@RequestBody @Valid UserDTO user) {
         User registeredUser = userService.registerUser(User.fromUserDTO(user));
-        return new UserDTO(registeredUser.getUsername(), registeredUser.getEmail());
+        return new UserDTO(registeredUser.getUsername(), registeredUser.getEmail(), registeredUser.getRole().getAuthority());
     }
 
 }
