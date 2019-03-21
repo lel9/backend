@@ -51,4 +51,6 @@ public class CustomUserDetails implements UserDetails {
         return true;
     }
 
+    public String getRole() { return user.getRole().getAuthority(); }
+
 }
