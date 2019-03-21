@@ -1,5 +1,6 @@
 package testsystem.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,17 +22,21 @@ public class UserDTO {
 
     @NotNull
     @NotEmpty
+    @JsonView({View.REST.class, View.UI_AUTH.class, View.UI_REG.class})
     private String username;
 
     @NotNull
     @NotEmpty
     @Email
+    @JsonView(View.UI_REG.class)
     private String email;
 
     @NotNull
     @NotEmpty
+    @JsonView({View.REST.class})
     private String password;
 
+    @JsonView({View.UI_AUTH.class, View.UI_REG.class})
     private String role;
 
 }
