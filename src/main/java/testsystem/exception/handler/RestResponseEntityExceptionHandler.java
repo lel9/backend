@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import testsystem.exception.EmailAlreadyExistsException;
+import testsystem.exception.EmailTokenIsExpiredException;
+import testsystem.exception.NoSuchEmailTokenException;
 import testsystem.exception.UserAlreadyExistsException;
 import testsystem.util.GenericResponse;
 
@@ -28,6 +30,18 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                                                                   final WebRequest request) {
         final BindingResult result = ex.getBindingResult();
         final GenericResponse bodyOfResponse = new GenericResponse(result.getAllErrors(), "Invalid" + result.getObjectName());
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({NoSuchEmailTokenException.class})
+    public ResponseEntity<Object> handleNoSuchEmailToken(final RuntimeException ex, final WebRequest request) {
+        final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "NoSuchEmailToken");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({EmailTokenIsExpiredException.class})
+    public ResponseEntity<Object> handleEmailTokenIsExpired(final RuntimeException ex, final WebRequest request) {
+        final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "EmailTokenIsExpired");
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
