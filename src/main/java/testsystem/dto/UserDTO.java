@@ -29,13 +29,13 @@ public class UserDTO {
 
     @NotNull
     @NotEmpty
-    @JsonView({View.REST.class, View.UI_AUTH.class, View.UI_REG.class})
+    @JsonView({View.REST.class, View.UI.class})
     private String username;
 
     @NotNull
     @NotEmpty
     @Email
-    @JsonView(View.UI_REG.class)
+    @JsonView({View.REST.class})
     private String email;
 
     @NotNull
@@ -43,15 +43,15 @@ public class UserDTO {
     @JsonView({View.REST.class})
     private String password;
 
-    @JsonView({View.UI_AUTH.class, View.UI_REG.class})
+    @JsonView({View.UI.class})
     private String role;
 
-    @JsonView({View.UI_AUTH.class, View.UI_REG.class})
+    @JsonView({View.UI.class})
     private Tokens tokens = new Tokens();
 
     @Data
     private class Tokens {
-        @JsonView({View.UI_AUTH.class, View.UI_REG.class})
+        @JsonView({View.UI.class})
         private String access_token;
     }
 
