@@ -52,11 +52,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = JWTFactory.create(((CustomUserDetails) auth.getPrincipal()).getUsername());
         res.addHeader(HEADER_STRING, token);
 
-        UserDTO userDTO = new UserDTO(
+        UserDTO userDTO = UserDTO.userWithoutEmailAndWithToken(
                 ((CustomUserDetails) auth.getPrincipal()).getUsername(),
                 ((CustomUserDetails) auth.getPrincipal()).getRole(),
                 token
-                );
+        );
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
