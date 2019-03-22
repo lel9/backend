@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class GenericResponse {
 
     private String message;
-    private String error;
+    private String type;
 
     public GenericResponse(final String message) {
         super();
@@ -22,7 +22,7 @@ public class GenericResponse {
     }
 
     public GenericResponse(List<ObjectError> allErrors, String error) {
-        this.error = error;
+        this.type = error;
         String temp = allErrors.stream().map(e -> {
             if (e instanceof FieldError) {
                 return "{\"field\":\"" + ((FieldError) e).getField() + "\",\"defaultMessage\":\"" + e.getDefaultMessage() + "\"}";
