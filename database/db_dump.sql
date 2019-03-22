@@ -5,7 +5,7 @@
 -- Dumped from database version 10.7
 -- Dumped by pg_dump version 10.7
 
--- Started on 2019-03-22 01:17:54 MSK
+-- Started on 2019-03-22 11:08:17 MSK
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,13 +20,11 @@ SET row_security = off;
 DROP DATABASE ejudge;
 --
 -- TOC entry 2909 (class 1262 OID 16822)
--- Name: ejudge; Type: DATABASE; Schema: -; Owner: postgres
+-- Name: ejudge; Type: DATABASE; Schema: -; Owner: -
 --
 
 CREATE DATABASE ejudge WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
 
-
-ALTER DATABASE ejudge OWNER TO postgres;
 
 \connect ejudge
 
@@ -42,7 +40,7 @@ SET row_security = off;
 
 --
 -- TOC entry 1 (class 3079 OID 12964)
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
@@ -51,7 +49,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 --
 -- TOC entry 2912 (class 0 OID 0)
 -- Dependencies: 1
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
@@ -59,7 +57,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 --
 -- TOC entry 513 (class 1247 OID 16824)
--- Name: progr_type; Type: TYPE; Schema: public; Owner: postgres
+-- Name: progr_type; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.progr_type AS ENUM (
@@ -69,11 +67,9 @@ CREATE TYPE public.progr_type AS ENUM (
 );
 
 
-ALTER TYPE public.progr_type OWNER TO postgres;
-
 --
 -- TOC entry 516 (class 1247 OID 16832)
--- Name: role_type; Type: TYPE; Schema: public; Owner: postgres
+-- Name: role_type; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.role_type AS ENUM (
@@ -82,11 +78,9 @@ CREATE TYPE public.role_type AS ENUM (
 );
 
 
-ALTER TYPE public.role_type OWNER TO postgres;
-
 --
 -- TOC entry 598 (class 1247 OID 16838)
--- Name: sex_type; Type: TYPE; Schema: public; Owner: postgres
+-- Name: sex_type; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.sex_type AS ENUM (
@@ -95,15 +89,13 @@ CREATE TYPE public.sex_type AS ENUM (
 );
 
 
-ALTER TYPE public.sex_type OWNER TO postgres;
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
 -- TOC entry 196 (class 1259 OID 16845)
--- Name: answers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: answers; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.answers (
@@ -113,11 +105,9 @@ CREATE TABLE public.answers (
 );
 
 
-ALTER TABLE public.answers OWNER TO postgres;
-
 --
 -- TOC entry 197 (class 1259 OID 16853)
--- Name: categories; Type: TABLE; Schema: public; Owner: postgres
+-- Name: categories; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.categories (
@@ -126,11 +116,9 @@ CREATE TABLE public.categories (
 );
 
 
-ALTER TABLE public.categories OWNER TO postgres;
-
 --
 -- TOC entry 198 (class 1259 OID 16873)
--- Name: profiles; Type: TABLE; Schema: public; Owner: postgres
+-- Name: profiles; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.profiles (
@@ -142,11 +130,9 @@ CREATE TABLE public.profiles (
 );
 
 
-ALTER TABLE public.profiles OWNER TO postgres;
-
 --
 -- TOC entry 199 (class 1259 OID 16879)
--- Name: status; Type: TABLE; Schema: public; Owner: postgres
+-- Name: status; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.status (
@@ -157,11 +143,9 @@ CREATE TABLE public.status (
 );
 
 
-ALTER TABLE public.status OWNER TO postgres;
-
 --
 -- TOC entry 200 (class 1259 OID 16885)
--- Name: task_limits; Type: TABLE; Schema: public; Owner: postgres
+-- Name: task_limits; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.task_limits (
@@ -173,27 +157,23 @@ CREATE TABLE public.task_limits (
 );
 
 
-ALTER TABLE public.task_limits OWNER TO postgres;
-
 --
 -- TOC entry 201 (class 1259 OID 16888)
--- Name: tasks; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tasks; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.tasks (
     id uuid NOT NULL,
     name text NOT NULL,
-    discription text,
+    description text,
     report_permission text NOT NULL,
     category_id uuid NOT NULL
 );
 
 
-ALTER TABLE public.tasks OWNER TO postgres;
-
 --
 -- TOC entry 202 (class 1259 OID 16894)
--- Name: tests; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tests; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.tests (
@@ -204,11 +184,9 @@ CREATE TABLE public.tests (
 );
 
 
-ALTER TABLE public.tests OWNER TO postgres;
-
 --
 -- TOC entry 203 (class 1259 OID 16900)
--- Name: user_solutions; Type: TABLE; Schema: public; Owner: postgres
+-- Name: user_solutions; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.user_solutions (
@@ -220,11 +198,9 @@ CREATE TABLE public.user_solutions (
 );
 
 
-ALTER TABLE public.user_solutions OWNER TO postgres;
-
 --
 -- TOC entry 204 (class 1259 OID 16903)
--- Name: users; Type: TABLE; Schema: public; Owner: postgres
+-- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.users (
@@ -238,11 +214,9 @@ CREATE TABLE public.users (
 );
 
 
-ALTER TABLE public.users OWNER TO postgres;
-
 --
 -- TOC entry 2757 (class 2606 OID 16910)
--- Name: answers answers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: answers answers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.answers
@@ -251,7 +225,7 @@ ALTER TABLE ONLY public.answers
 
 --
 -- TOC entry 2755 (class 2606 OID 16911)
--- Name: profiles birthday_check; Type: CHECK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: profiles birthday_check; Type: CHECK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE public.profiles
@@ -260,7 +234,7 @@ ALTER TABLE public.profiles
 
 --
 -- TOC entry 2759 (class 2606 OID 16913)
--- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.categories
@@ -269,7 +243,7 @@ ALTER TABLE ONLY public.categories
 
 --
 -- TOC entry 2761 (class 2606 OID 16915)
--- Name: profiles profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: profiles profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.profiles
@@ -278,7 +252,7 @@ ALTER TABLE ONLY public.profiles
 
 --
 -- TOC entry 2763 (class 2606 OID 16917)
--- Name: status status_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: status status_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.status
@@ -287,7 +261,7 @@ ALTER TABLE ONLY public.status
 
 --
 -- TOC entry 2765 (class 2606 OID 16919)
--- Name: task_limits task_limits_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: task_limits task_limits_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.task_limits
@@ -296,7 +270,7 @@ ALTER TABLE ONLY public.task_limits
 
 --
 -- TOC entry 2767 (class 2606 OID 16921)
--- Name: tasks tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tasks tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tasks
@@ -305,7 +279,7 @@ ALTER TABLE ONLY public.tasks
 
 --
 -- TOC entry 2769 (class 2606 OID 16923)
--- Name: tests tests_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tests tests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tests
@@ -314,7 +288,7 @@ ALTER TABLE ONLY public.tests
 
 --
 -- TOC entry 2771 (class 2606 OID 16925)
--- Name: user_solutions user_solutions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_solutions user_solutions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_solutions
@@ -323,7 +297,7 @@ ALTER TABLE ONLY public.user_solutions
 
 --
 -- TOC entry 2773 (class 2606 OID 16927)
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
@@ -332,7 +306,7 @@ ALTER TABLE ONLY public.users
 
 --
 -- TOC entry 2778 (class 2606 OID 16928)
--- Name: user_solutions answer_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_solutions answer_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_solutions
@@ -341,7 +315,7 @@ ALTER TABLE ONLY public.user_solutions
 
 --
 -- TOC entry 2776 (class 2606 OID 16933)
--- Name: tasks category_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tasks category_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tasks
@@ -350,7 +324,7 @@ ALTER TABLE ONLY public.tasks
 
 --
 -- TOC entry 2774 (class 2606 OID 16938)
--- Name: status error_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: status error_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.status
@@ -359,7 +333,7 @@ ALTER TABLE ONLY public.status
 
 --
 -- TOC entry 2782 (class 2606 OID 16943)
--- Name: users profile_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: users profile_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
@@ -368,7 +342,7 @@ ALTER TABLE ONLY public.users
 
 --
 -- TOC entry 2779 (class 2606 OID 16948)
--- Name: user_solutions status_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_solutions status_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_solutions
@@ -377,7 +351,7 @@ ALTER TABLE ONLY public.user_solutions
 
 --
 -- TOC entry 2777 (class 2606 OID 16953)
--- Name: tests task_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tests task_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.tests
@@ -386,7 +360,7 @@ ALTER TABLE ONLY public.tests
 
 --
 -- TOC entry 2775 (class 2606 OID 16958)
--- Name: task_limits task_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: task_limits task_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.task_limits
@@ -395,7 +369,7 @@ ALTER TABLE ONLY public.task_limits
 
 --
 -- TOC entry 2780 (class 2606 OID 16963)
--- Name: user_solutions task_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_solutions task_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_solutions
@@ -404,7 +378,7 @@ ALTER TABLE ONLY public.user_solutions
 
 --
 -- TOC entry 2781 (class 2606 OID 16968)
--- Name: user_solutions user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: user_solutions user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_solutions
@@ -414,13 +388,13 @@ ALTER TABLE ONLY public.user_solutions
 --
 -- TOC entry 2911 (class 0 OID 0)
 -- Dependencies: 6
--- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: -
 --
 
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2019-03-22 01:17:54 MSK
+-- Completed on 2019-03-22 11:08:17 MSK
 
 --
 -- PostgreSQL database dump complete
