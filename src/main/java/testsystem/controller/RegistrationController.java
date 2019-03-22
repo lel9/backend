@@ -63,7 +63,7 @@ public class RegistrationController {
 
         return UserDTO.userWithoutEmailAndWithoutToken(
                 user.getUsername(),
-                user.getRole().getAuthority()
+                user.getRole().toString()
         );
     }
 

@@ -51,6 +51,8 @@ public class CustomUserDetails implements UserDetails {
         return user.isEnabled();
     }
 
-    public String getRole() { return user.getRole().getAuthority(); }
+    public String getRole() {
+        return user.getRole().toString();
+    }
 
 }
