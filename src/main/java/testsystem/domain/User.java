@@ -1,17 +1,21 @@
 package testsystem.domain;
 
-import javax.persistence.*;
-
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import testsystem.dto.UserDTO;
 
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
 @Table(name="users")
 @Data
-@AllArgsConstructor(access=AccessLevel.PUBLIC)
-@NoArgsConstructor(access=AccessLevel.PRIVATE, force=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class User {
 
     @Id

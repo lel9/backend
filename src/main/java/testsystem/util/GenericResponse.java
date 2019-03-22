@@ -3,34 +3,29 @@ package testsystem.util;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
+import lombok.NoArgsConstructor;
+import testsystem.dto.IResultResponse;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
-@AllArgsConstructor(access=AccessLevel.PUBLIC)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class GenericResponse {
 
-    private String message;
-    private String error;
+    private IResultResponse response;
+    private List<ErrorResponse> errors = new ArrayList<>();
 
-    public GenericResponse(final String message) {
-        super();
-        this.message = message;
+    public GenericResponse(IResultResponse response) {
+        this.response = response;
     }
 
-    public GenericResponse(List<ObjectError> allErrors, String error) {
-        this.error = error;
-        String temp = allErrors.stream().map(e -> {
-            if (e instanceof FieldError) {
-                return "{\"field\":\"" + ((FieldError) e).getField() + "\",\"defaultMessage\":\"" + e.getDefaultMessage() + "\"}";
-            } else {
-                return "{\"object\":\"" + e.getObjectName() + "\",\"defaultMessage\":\"" + e.getDefaultMessage() + "\"}";
-            }
-        }).collect(Collectors.joining(","));
-        this.message = "[" + temp + "]";
+    public GenericResponse(List<ErrorResponse> errors) {
+        this.errors = new ArrayList<>(errors);
     }
 
+    public void addError(ErrorResponse error) {
+        errors.add(error);
+    }
 }
