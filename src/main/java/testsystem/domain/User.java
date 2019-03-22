@@ -2,7 +2,6 @@ package testsystem.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import testsystem.dto.UserDTO;
@@ -14,7 +13,6 @@ import java.util.UUID;
 @Table(name="users")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-@AllArgsConstructor(access=AccessLevel.PUBLIC)
 @NoArgsConstructor(access=AccessLevel.PRIVATE, force=true)
 public class User {
 
@@ -28,8 +26,16 @@ public class User {
 
     private String password_hash;
 
+    private boolean enabled = false;
+
     @Enumerated(EnumType.STRING)
     private final UserRole role = UserRole.USER;
+
+    private User(String username, String email, String password_hash) {
+        this.username = username;
+        this.email = email;
+        this.password_hash = password_hash;
+    }
 
     public static User fromUserDTO(UserDTO userDTO) {
         return new User(userDTO.getUsername(), userDTO.getEmail(), userDTO.getPassword());

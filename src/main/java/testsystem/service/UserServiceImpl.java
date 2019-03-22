@@ -3,9 +3,11 @@ package testsystem.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import testsystem.domain.EmailToken;
 import testsystem.domain.User;
 import testsystem.exception.EmailAlreadyExistsException;
 import testsystem.exception.UserAlreadyExistsException;
+import testsystem.repository.EmailTokenRepository;
 import testsystem.repository.UserRepository;
 
 
@@ -14,6 +16,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EmailTokenRepository tokenRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -37,4 +42,30 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
+    private boolean emailExist(String email) {
+        User user = userRepository.findByEmail(email);
+        return user != null;
+    }
+
+    @Override
+    public User findUserByVerificationToken(String verificationToken) {
+        return tokenRepository.findByToken(verificationToken).getUser();
+    }
+
+    @Override
+    public EmailToken getVerificationToken(String token) {
+        return tokenRepository.findByToken(token);
+    }
+
+    @Override
+    public void createEmailToken(User user, String token) {
+        EmailToken emailToken = new EmailToken(token, user);
+        tokenRepository.save(emailToken);
+    }
+
+    @Override
+    public void activateUser(User user) {
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
 }
