@@ -16,7 +16,6 @@ import testsystem.dto.View;
 import testsystem.event.OnRegistrationCompleteEvent;
 import testsystem.exception.EmailTokenIsExpiredException;
 import testsystem.exception.NoSuchEmailTokenException;
-import testsystem.security.JWTFactory;
 import testsystem.service.UserServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,12 +61,10 @@ public class RegistrationController {
         User user = verificationToken.getUser();
         userService.activateUser(user);
 
-        String accessToken = JWTFactory.create(user.getUsername());
-        return new UserDTO(
+        return UserDTO.userWithoutEmailAndWithoutToken(
                 user.getUsername(),
-                user.getEmail(),
-                user.getRole().getAuthority(),
-                accessToken);
+                user.getRole().getAuthority()
+        );
     }
 
 }
