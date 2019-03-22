@@ -5,7 +5,7 @@
 -- Dumped from database version 10.7
 -- Dumped by pg_dump version 10.7
 
--- Started on 2019-03-22 11:08:17 MSK
+-- Started on 2019-03-22 12:26:27 MSK
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -19,7 +19,7 @@ SET row_security = off;
 
 DROP DATABASE ejudge;
 --
--- TOC entry 2909 (class 1262 OID 16822)
+-- TOC entry 2926 (class 1262 OID 16822)
 -- Name: ejudge; Type: DATABASE; Schema: -; Owner: -
 --
 
@@ -47,7 +47,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- TOC entry 2912 (class 0 OID 0)
+-- TOC entry 2929 (class 0 OID 0)
 -- Dependencies: 1
 -- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
 --
@@ -56,7 +56,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
--- TOC entry 513 (class 1247 OID 16824)
+-- TOC entry 515 (class 1247 OID 16824)
 -- Name: progr_type; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -68,7 +68,7 @@ CREATE TYPE public.progr_type AS ENUM (
 
 
 --
--- TOC entry 516 (class 1247 OID 16832)
+-- TOC entry 518 (class 1247 OID 16832)
 -- Name: role_type; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -79,7 +79,7 @@ CREATE TYPE public.role_type AS ENUM (
 
 
 --
--- TOC entry 598 (class 1247 OID 16838)
+-- TOC entry 600 (class 1247 OID 16838)
 -- Name: sex_type; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -117,6 +117,19 @@ CREATE TABLE public.categories (
 
 
 --
+-- TOC entry 206 (class 1259 OID 16987)
+-- Name: email_tokens; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.email_tokens (
+    id uuid NOT NULL,
+    token text NOT NULL,
+    creation_date bigint NOT NULL,
+    user_id uuid NOT NULL
+);
+
+
+--
 -- TOC entry 198 (class 1259 OID 16873)
 -- Name: profiles; Type: TABLE; Schema: public; Owner: -
 --
@@ -127,6 +140,18 @@ CREATE TABLE public.profiles (
     surname text,
     sex public.sex_type,
     birthday bigint
+);
+
+
+--
+-- TOC entry 205 (class 1259 OID 16974)
+-- Name: refresh_tokens; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.refresh_tokens (
+    id uuid NOT NULL,
+    token text NOT NULL,
+    user_id uuid NOT NULL
 );
 
 
@@ -208,14 +233,14 @@ CREATE TABLE public.users (
     username text NOT NULL,
     password_hash text NOT NULL,
     email text NOT NULL,
-    token text NOT NULL,
     profile_id uuid NOT NULL,
-    role public.role_type NOT NULL
+    role public.role_type NOT NULL,
+    enabled boolean NOT NULL
 );
 
 
 --
--- TOC entry 2757 (class 2606 OID 16910)
+-- TOC entry 2768 (class 2606 OID 16910)
 -- Name: answers answers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -224,7 +249,7 @@ ALTER TABLE ONLY public.answers
 
 
 --
--- TOC entry 2755 (class 2606 OID 16911)
+-- TOC entry 2765 (class 2606 OID 16911)
 -- Name: profiles birthday_check; Type: CHECK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -233,7 +258,7 @@ ALTER TABLE public.profiles
 
 
 --
--- TOC entry 2759 (class 2606 OID 16913)
+-- TOC entry 2770 (class 2606 OID 16913)
 -- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -242,7 +267,25 @@ ALTER TABLE ONLY public.categories
 
 
 --
--- TOC entry 2761 (class 2606 OID 16915)
+-- TOC entry 2766 (class 2606 OID 17000)
+-- Name: email_tokens creation_date_check; Type: CHECK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE public.email_tokens
+    ADD CONSTRAINT creation_date_check CHECK ((creation_date > 0)) NOT VALID;
+
+
+--
+-- TOC entry 2788 (class 2606 OID 16994)
+-- Name: email_tokens email_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_tokens
+    ADD CONSTRAINT email_tokens_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2772 (class 2606 OID 16915)
 -- Name: profiles profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -251,7 +294,16 @@ ALTER TABLE ONLY public.profiles
 
 
 --
--- TOC entry 2763 (class 2606 OID 16917)
+-- TOC entry 2786 (class 2606 OID 16981)
+-- Name: refresh_tokens refresh_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.refresh_tokens
+    ADD CONSTRAINT refresh_tokens_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2774 (class 2606 OID 16917)
 -- Name: status status_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -260,7 +312,7 @@ ALTER TABLE ONLY public.status
 
 
 --
--- TOC entry 2765 (class 2606 OID 16919)
+-- TOC entry 2776 (class 2606 OID 16919)
 -- Name: task_limits task_limits_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -269,7 +321,7 @@ ALTER TABLE ONLY public.task_limits
 
 
 --
--- TOC entry 2767 (class 2606 OID 16921)
+-- TOC entry 2778 (class 2606 OID 16921)
 -- Name: tasks tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -278,7 +330,7 @@ ALTER TABLE ONLY public.tasks
 
 
 --
--- TOC entry 2769 (class 2606 OID 16923)
+-- TOC entry 2780 (class 2606 OID 16923)
 -- Name: tests tests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -287,7 +339,7 @@ ALTER TABLE ONLY public.tests
 
 
 --
--- TOC entry 2771 (class 2606 OID 16925)
+-- TOC entry 2782 (class 2606 OID 16925)
 -- Name: user_solutions user_solutions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -296,7 +348,7 @@ ALTER TABLE ONLY public.user_solutions
 
 
 --
--- TOC entry 2773 (class 2606 OID 16927)
+-- TOC entry 2784 (class 2606 OID 16927)
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -305,7 +357,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 2778 (class 2606 OID 16928)
+-- TOC entry 2793 (class 2606 OID 16928)
 -- Name: user_solutions answer_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -314,7 +366,7 @@ ALTER TABLE ONLY public.user_solutions
 
 
 --
--- TOC entry 2776 (class 2606 OID 16933)
+-- TOC entry 2791 (class 2606 OID 16933)
 -- Name: tasks category_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -323,7 +375,7 @@ ALTER TABLE ONLY public.tasks
 
 
 --
--- TOC entry 2774 (class 2606 OID 16938)
+-- TOC entry 2789 (class 2606 OID 16938)
 -- Name: status error_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -332,7 +384,7 @@ ALTER TABLE ONLY public.status
 
 
 --
--- TOC entry 2782 (class 2606 OID 16943)
+-- TOC entry 2797 (class 2606 OID 16943)
 -- Name: users profile_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -341,7 +393,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 2779 (class 2606 OID 16948)
+-- TOC entry 2794 (class 2606 OID 16948)
 -- Name: user_solutions status_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -350,7 +402,7 @@ ALTER TABLE ONLY public.user_solutions
 
 
 --
--- TOC entry 2777 (class 2606 OID 16953)
+-- TOC entry 2792 (class 2606 OID 16953)
 -- Name: tests task_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -359,7 +411,7 @@ ALTER TABLE ONLY public.tests
 
 
 --
--- TOC entry 2775 (class 2606 OID 16958)
+-- TOC entry 2790 (class 2606 OID 16958)
 -- Name: task_limits task_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -368,7 +420,7 @@ ALTER TABLE ONLY public.task_limits
 
 
 --
--- TOC entry 2780 (class 2606 OID 16963)
+-- TOC entry 2795 (class 2606 OID 16963)
 -- Name: user_solutions task_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -377,7 +429,7 @@ ALTER TABLE ONLY public.user_solutions
 
 
 --
--- TOC entry 2781 (class 2606 OID 16968)
+-- TOC entry 2796 (class 2606 OID 16968)
 -- Name: user_solutions user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -386,7 +438,25 @@ ALTER TABLE ONLY public.user_solutions
 
 
 --
--- TOC entry 2911 (class 0 OID 0)
+-- TOC entry 2798 (class 2606 OID 16982)
+-- Name: refresh_tokens user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.refresh_tokens
+    ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- TOC entry 2799 (class 2606 OID 16995)
+-- Name: email_tokens user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.email_tokens
+    ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- TOC entry 2928 (class 0 OID 0)
 -- Dependencies: 6
 -- Name: SCHEMA public; Type: ACL; Schema: -; Owner: -
 --
@@ -394,7 +464,7 @@ ALTER TABLE ONLY public.user_solutions
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2019-03-22 11:08:17 MSK
+-- Completed on 2019-03-22 12:26:27 MSK
 
 --
 -- PostgreSQL database dump complete
