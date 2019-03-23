@@ -41,12 +41,6 @@ public class User {
         this.password_hash = password_hash;
     }
 
-    private User(String username, String email, String password_hash) {
-        this.username = username;
-        this.email = email;
-        this.password_hash = password_hash;
-    }
-
     public static User fromUserDTO(UserDTO userDTO) {
         return new User(userDTO.getUsername(), userDTO.getEmail(), userDTO.getPassword());
     }

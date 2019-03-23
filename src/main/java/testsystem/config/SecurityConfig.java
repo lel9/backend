@@ -15,6 +15,7 @@ import testsystem.security.CustomUserDetailsService;
 import testsystem.security.JWTAuthenticationFilter;
 import testsystem.security.JWTAuthorizationFilter;
 
+import static testsystem.security.SecurityConstants.SIGN_UP_CONFIRM_URL;
 import static testsystem.security.SecurityConstants.SIGN_UP_URL;
 
 @Configuration
@@ -30,6 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                .antMatchers(HttpMethod.POST, SIGN_UP_CONFIRM_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))
