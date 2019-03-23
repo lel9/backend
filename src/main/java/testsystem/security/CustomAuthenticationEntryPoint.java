@@ -19,7 +19,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint,
                          HttpServletResponse response,
                          AuthenticationException e) throws IOException {
 
-        GenericResponse responseBody = new GenericResponse("Неверный логин или пароль", "AuthorizationFailure");
+        GenericResponse responseBody = new GenericResponse("РќРµРІРµСЂРЅС‹Р№ Р»РѕРіРёРЅ РёР»Рё РїР°СЂРѕР»СЊ", "AuthorizationFailure");
 
         ObjectMapper mapper = new ObjectMapper();
         String body = mapper.writeValueAsString(responseBody);
