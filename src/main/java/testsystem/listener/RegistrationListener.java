@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.UUID;
 
+import static testsystem.security.SecurityConstants.SIGN_UP_CONFIRM_URL;
+
 @Service
 @EnableAsync
 public class RegistrationListener {
@@ -39,8 +41,8 @@ public class RegistrationListener {
     public RegistrationListener(UserService service, Environment env) {
         this.service = service;
 
-        this.host = env.getProperty("server.address");
-        this.port = env.getProperty("server.port");
+        this.host = env.getProperty("frontend.address");
+        this.port = env.getProperty("frontend.port");
 
         mailProp = new Properties();
         configurateMailSender();
@@ -53,8 +55,8 @@ public class RegistrationListener {
         String token = UUID.randomUUID().toString();
         service.createEmailToken(user, token);
 
-        String confirmationUrl = event.getAppUrl() + "/registration/сonfirm?token=" + token;
-        String messageFull = MESSAGE + String.format("http://%s:%s/%s", host, port, confirmationUrl);
+        String confirmationUrl = event.getAppUrl() + SIGN_UP_CONFIRM_URL + "?token=" + token;
+        String messageFull = MESSAGE + String.format("http://%s:%s%s", host, port, confirmationUrl);
 
         if (sender != null)
             sender.send(SUBJECT, messageFull, user.getEmail());
