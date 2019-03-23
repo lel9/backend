@@ -14,17 +14,24 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access=AccessLevel.PRIVATE, force=true)
 public class UserDTO {
 
-    public UserDTO(String username, String email, String role, String accessToken) {
-        this.username = username;
-        this.email = email;
-        this.role = role;
-        this.tokens.access_token = accessToken;
+    public static UserDTO userWithoutEmailAndWithToken(String username,
+                                                       String role,
+                                                       String token) {
+        UserDTO user = new UserDTO();
+        user.setUsername(username);
+        user.setRole(role);
+        Tokens tokens = new Tokens();
+        tokens.setAccess_token(token);
+        user.setTokens(tokens);
+        return user;
     }
 
-    public UserDTO(String username, String role, String accessToken) {
-        this.username = username;
-        this.role = role;
-        this.tokens.access_token = accessToken;
+    public static UserDTO userWithoutEmailAndWithoutToken(String username,
+                                                          String role) {
+        UserDTO user = new UserDTO();
+        user.setUsername(username);
+        user.setRole(role);
+        return user;
     }
 
     @NotNull
@@ -46,12 +53,10 @@ public class UserDTO {
     @JsonView({View.UI.class})
     private String role;
 
-    @JsonView({View.UI.class})
     private Tokens tokens = new Tokens();
 
     @Data
-    private class Tokens {
-        @JsonView({View.UI.class})
+    private static class Tokens {
         private String access_token;
     }
 

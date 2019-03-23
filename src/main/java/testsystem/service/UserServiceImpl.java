@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import testsystem.domain.EmailToken;
+import testsystem.domain.Profile;
 import testsystem.domain.User;
 import testsystem.exception.EmailAlreadyExistsException;
 import testsystem.exception.UserAlreadyExistsException;
 import testsystem.repository.EmailTokenRepository;
+import testsystem.repository.ProfileRepository;
 import testsystem.repository.UserRepository;
 
 
@@ -16,6 +18,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ProfileRepository profileRepository;
 
     @Autowired
     private EmailTokenRepository tokenRepository;
@@ -34,6 +39,11 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyExistsException(email);
 
         user.setPassword_hash(passwordEncoder.encode(user.getPassword_hash()));
+
+        Profile profile = new Profile();
+        Profile saved = profileRepository.save(profile);
+        user.setProfile(saved);
+
         return userRepository.save(user);
     }
 

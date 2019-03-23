@@ -39,8 +39,8 @@ public class RegistrationListener {
     public RegistrationListener(UserService service, Environment env) {
         this.service = service;
 
-        this.host = env.getProperty("server.address");
-        this.port = env.getProperty("server.port");
+        this.host = env.getProperty("frontend.address");
+        this.port = env.getProperty("frontend.port");
 
         mailProp = new Properties();
         configurateMailSender();
@@ -53,7 +53,7 @@ public class RegistrationListener {
         String token = UUID.randomUUID().toString();
         service.createEmailToken(user, token);
 
-        String confirmationUrl = event.getAppUrl() + "/registration/сonfirm?token=" + token;
+        String confirmationUrl = event.getAppUrl() + "/register/сonfirm?token=" + token;
         String messageFull = MESSAGE + String.format("http://%s:%s/%s", host, port, confirmationUrl);
 
         if (sender != null)

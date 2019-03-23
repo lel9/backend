@@ -29,7 +29,17 @@ public class User {
     private boolean enabled = false;
 
     @Enumerated(EnumType.STRING)
-    private final UserRole role = UserRole.USER;
+    private final UserRole role = UserRole.user;
+
+    @OneToOne(targetEntity = Profile.class, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "profile_id")
+    private Profile profile;
+
+    private User(String username, String email, String password_hash) {
+        this.username = username;
+        this.email = email;
+        this.password_hash = password_hash;
+    }
 
     private User(String username, String email, String password_hash) {
         this.username = username;
