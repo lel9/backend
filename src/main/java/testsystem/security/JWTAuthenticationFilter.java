@@ -62,6 +62,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         String body = mapper.writeValueAsString(userDTO);
 
+        res.setHeader("Content-type", "application/json; charset=utf-8");
         res.getWriter().write(body);
     }
 }
