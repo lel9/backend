@@ -25,7 +25,7 @@ public class Category {
 
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "category")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "category", orphanRemoval = true)
     private List<Task> tasks;
 
     public static Category fromCategoryDTO(CategoryDTO categoryDTO) {

@@ -1,6 +1,5 @@
 package testsystem.dto;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,16 +13,17 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class CategoryDTO {
 
-    @NotNull(message = "Идентификатор категории должен быть задан")
-    @NotEmpty(message = "Идентификатор категории не должен быть пуст")
-    @JsonView({CategoryView.EDIT.class, CategoryView.DELETE.class, CategoryView.LIST.class})
+    @NotNull(message = "Идентификатор категории должен быть задан",
+             groups = {CategoryView.DELETE.class, CategoryView.EDIT.class})
+    @NotEmpty(message = "Идентификатор категории не должен быть пуст",
+              groups = {CategoryView.DELETE.class, CategoryView.EDIT.class})
     private String id;
 
-    @NotNull(message = "Название категории должно быть задано")
-    @NotEmpty(message = "Название категории не должно быть пусто")
-    @JsonView({CategoryView.ADD.class, CategoryView.EDIT.class, CategoryView.LIST.class})
+    @NotNull(message = "Название категории должно быть задано",
+             groups = {CategoryView.ADD.class, CategoryView.EDIT.class})
+    @NotEmpty(message = "Название категории не должно быть пусто",
+              groups = {CategoryView.ADD.class, CategoryView.EDIT.class})
     private String name;
 
-    @JsonView({CategoryView.LIST.class})
     private int count;
 }

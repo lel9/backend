@@ -70,7 +70,8 @@ public class CategoryServiceImpl implements CategoryService {
     public void editCategory(CategoryDTO categoryDTO) {
         UUID uuid = validateId(categoryDTO.getId());
         Category category = validateCategoryExists(uuid);
-        validateCategoryNameExists(categoryDTO.getName());
+        if (!category.getName().equals(categoryDTO.getName()))
+            validateCategoryNameExists(categoryDTO.getName());
 
         category.setName(categoryDTO.getName());
         categoryRepository.save(category);
