@@ -14,12 +14,14 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class CategoryDTO {
 
-    @JsonView({CategoryView.LIST.class})
+    @NotNull
+    @NotEmpty
+    @JsonView({CategoryView.EDIT.class, CategoryView.LIST.class})
     private String id;
 
     @NotNull
     @NotEmpty
-    @JsonView({CategoryView.ADD.class, CategoryView.LIST.class})
+    @JsonView({CategoryView.ADD.class, CategoryView.EDIT.class, CategoryView.LIST.class})
     private String name;
 
     @JsonView({CategoryView.LIST.class})

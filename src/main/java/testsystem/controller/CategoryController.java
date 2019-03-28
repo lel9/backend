@@ -25,6 +25,13 @@ public class CategoryController {
         categoryService.addNewCategory(categoryDTO);
     }
 
+    @PostMapping("/category/edit")
+    @ResponseStatus(HttpStatus.OK)
+    @JsonView(CategoryView.EDIT.class)
+    public void editCategory(@RequestBody @Valid CategoryDTO categoryDTO) {
+        categoryService.editCategory(categoryDTO);
+    }
+
     @GetMapping("/category/list")
     @JsonView(CategoryView.LIST.class)
     public CategoryListDTO getCategoryList() {

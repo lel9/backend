@@ -10,4 +10,6 @@ public interface CategoryService {
     CategoryListDTO getCategoriesList();
 
     TaskListDTO getTasksList(String id);
+
+    void editCategory(CategoryDTO categoryDTO);
 }
