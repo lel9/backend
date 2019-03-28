@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import testsystem.exception.EmailAlreadyExistsException;
-import testsystem.exception.EmailTokenIsExpiredException;
-import testsystem.exception.NoSuchEmailTokenException;
-import testsystem.exception.UserAlreadyExistsException;
+import testsystem.exception.*;
 import testsystem.util.GenericResponse;
 
 @ControllerAdvice
@@ -55,6 +52,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler({ EmailAlreadyExistsException.class })
     public ResponseEntity<Object> handleEmailAlreadyExist(final RuntimeException ex, final WebRequest request) {
         final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "EmailAlreadyExists");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
+    @ExceptionHandler({ CategoryAlreadyExistsException.class })
+    public ResponseEntity<Object> handleCategoryAlreadyExist(final RuntimeException ex, final WebRequest request) {
+        final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "CategoryAlreadyExists");
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 

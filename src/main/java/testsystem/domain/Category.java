@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import testsystem.dto.CategoryDTO;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,4 +25,8 @@ public class Category {
     private final UUID id = UUID.randomUUID();
 
     private String name;
+
+    public static Category fromCategoryDTO(CategoryDTO categoryDTO) {
+        return new Category(categoryDTO.getName());
+    }
 }
