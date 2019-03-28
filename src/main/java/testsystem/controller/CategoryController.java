@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import testsystem.dto.CategoryDTO;
 import testsystem.dto.CategoryListDTO;
 import testsystem.dto.CategoryView;
+import testsystem.dto.TaskListDTO;
 import testsystem.service.CategoryServiceImpl;
 
 import javax.validation.Valid;
@@ -28,5 +29,10 @@ public class CategoryController {
     @JsonView(CategoryView.LIST.class)
     public CategoryListDTO getCategoryList() {
         return categoryService.getCategoriesList();
+    }
+
+    @GetMapping("/categories/{id}/tasks")
+    public TaskListDTO getTaskList(@PathVariable String id) {
+        return categoryService.getTasksList(id);
     }
 }

@@ -30,6 +30,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler({NoSuchCategoryException.class})
+    public ResponseEntity<Object> handleNoSuchCategory(final RuntimeException ex, final WebRequest request) {
+        final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "NoSuchCategory");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
     @ExceptionHandler({NoSuchEmailTokenException.class})
     public ResponseEntity<Object> handleNoSuchEmailToken(final RuntimeException ex, final WebRequest request) {
         final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "NoSuchEmailToken");
