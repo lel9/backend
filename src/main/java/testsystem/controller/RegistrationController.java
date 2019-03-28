@@ -12,7 +12,7 @@ import testsystem.domain.EmailToken;
 import testsystem.domain.User;
 import testsystem.dto.EmailTokenDTO;
 import testsystem.dto.UserDTO;
-import testsystem.dto.View;
+import testsystem.dto.UserView;
 import testsystem.event.OnRegistrationCompleteEvent;
 import testsystem.exception.EmailTokenIsExpiredException;
 import testsystem.exception.NoSuchEmailTokenException;
@@ -46,7 +46,7 @@ public class RegistrationController {
     }
 
     @PostMapping(SIGN_UP_CONFIRM_URL)
-    @JsonView(View.UI.class)
+    @JsonView(UserView.UI.class)
     @ResponseStatus(HttpStatus.OK)
     public UserDTO confirmRegistration(@RequestBody @Valid EmailTokenDTO token) {
 
