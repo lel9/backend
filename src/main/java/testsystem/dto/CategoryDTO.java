@@ -14,13 +14,13 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class CategoryDTO {
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = "Идентификатор категории должен быть задан")
+    @NotEmpty(message = "Идентификатор категории не должен быть пуст")
     @JsonView({CategoryView.EDIT.class, CategoryView.DELETE.class, CategoryView.LIST.class})
     private String id;
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = "Название категории должно быть задано")
+    @NotEmpty(message = "Название категории не должно быть пусто")
     @JsonView({CategoryView.ADD.class, CategoryView.EDIT.class, CategoryView.LIST.class})
     private String name;
 

@@ -13,8 +13,8 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class EmailTokenDTO {
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = "Токен верификации должен быть задан")
+    @NotEmpty(message = "Токен верификации не должен быть пуст")
     private String token;
 
 }
