@@ -6,22 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-public class CategoryDTO {
+public class CategoryListDTO {
 
     @JsonView({CategoryView.LIST.class})
-    private String id;
-
-    @NotNull
-    @NotEmpty
-    @JsonView({CategoryView.ADD.class, CategoryView.LIST.class})
-    private String name;
-
-    @JsonView({CategoryView.LIST.class})
-    private int count;
+    private List<CategoryDTO> categories;
 }

@@ -1,6 +1,6 @@
 package testsystem.dto;
 
-public class View {
+public class UserView {
     public static class REST {}
 
     public static class UI {
