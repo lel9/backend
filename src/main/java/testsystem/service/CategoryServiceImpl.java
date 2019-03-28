@@ -42,9 +42,9 @@ public class CategoryServiceImpl implements CategoryService {
 
         all.forEach(category -> list.add(
                 new CategoryDTO(
-                    category.getId().toString(),
-                    category.getName(),
-                    taskRepository.findByCategory(category).size()
+                        category.getId().toString(),
+                        category.getName(),
+                        category.getTasks().size()
                 )
         ));
 

@@ -7,10 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import testsystem.dto.CategoryDTO;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,7 +25,10 @@ public class Category {
 
     private String name;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "category")
+    private List<Task> tasks;
+
     public static Category fromCategoryDTO(CategoryDTO categoryDTO) {
-        return new Category(categoryDTO.getName());
+        return new Category(categoryDTO.getName(), new ArrayList<>());
     }
 }
