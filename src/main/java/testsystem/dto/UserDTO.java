@@ -36,21 +36,21 @@ public class UserDTO {
 
     @NotNull
     @NotEmpty
-    @JsonView({View.REST.class, View.UI.class})
+    @JsonView({UserView.REST.class, UserView.UI.class})
     private String username;
 
     @NotNull
     @NotEmpty
     @Email
-    @JsonView({View.REST.class})
+    @JsonView({UserView.REST.class})
     private String email;
 
     @NotNull
     @NotEmpty
-    @JsonView({View.REST.class})
+    @JsonView({UserView.REST.class})
     private String password;
 
-    @JsonView({View.UI.class})
+    @JsonView({UserView.UI.class})
     private String role;
 
     private Tokens tokens = new Tokens();
