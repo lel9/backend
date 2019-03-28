@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import testsystem.domain.EmailToken;
 import testsystem.domain.Profile;
 import testsystem.domain.User;
+import testsystem.dto.UserDTO;
 import testsystem.exception.EmailAlreadyExistsException;
 import testsystem.exception.UserAlreadyExistsException;
 import testsystem.repository.EmailTokenRepository;
@@ -29,7 +30,9 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public User registerUser(User user) {
+    public User registerUser(UserDTO userDTO) {
+        User user = User.fromUserDTO(userDTO);
+
         String username = user.getUsername();
         String email = user.getEmail();
 

@@ -36,7 +36,7 @@ public class RegistrationController {
     @PostMapping(SIGN_UP_URL)
     @ResponseStatus(HttpStatus.CREATED)
     public void signUp(@RequestBody @Valid UserDTO user, HttpServletRequest request) {
-        User registeredUser = userService.registerUser(User.fromUserDTO(user));
+        User registeredUser = userService.registerUser(user);
 
         String appUrl = request.getContextPath();
         eventPublisher.publishEvent(new OnRegistrationCompleteEvent(

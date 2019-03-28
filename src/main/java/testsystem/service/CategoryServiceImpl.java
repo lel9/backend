@@ -28,10 +28,10 @@ public class CategoryServiceImpl implements CategoryService {
     private TaskRepository taskRepository;
 
     @Override
-    public void addNewCategory(CategoryDTO categoryDTO) {
+    public Category addNewCategory(CategoryDTO categoryDTO) {
         Category category = Category.fromCategoryDTO(categoryDTO);
         validateCategoryNameExists(category.getName());
-        categoryRepository.save(category);
+        return categoryRepository.save(category);
     }
 
     @Override
@@ -67,14 +67,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void editCategory(CategoryDTO categoryDTO) {
+    public Category editCategory(CategoryDTO categoryDTO) {
         UUID uuid = validateId(categoryDTO.getId());
         Category category = validateCategoryExists(uuid);
         if (!category.getName().equals(categoryDTO.getName()))
             validateCategoryNameExists(categoryDTO.getName());
 
         category.setName(categoryDTO.getName());
-        categoryRepository.save(category);
+        return categoryRepository.save(category);
     }
 
     @Override

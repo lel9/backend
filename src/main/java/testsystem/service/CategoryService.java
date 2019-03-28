@@ -1,17 +1,19 @@
 package testsystem.service;
 
+import testsystem.domain.Category;
 import testsystem.dto.CategoryDTO;
 import testsystem.dto.CategoryListDTO;
 import testsystem.dto.TaskListDTO;
 
 public interface CategoryService {
-    void addNewCategory(CategoryDTO categoryDTO);
+
+    Category addNewCategory(CategoryDTO categoryDTO);
 
     CategoryListDTO getCategoriesList();
 
     TaskListDTO getTasksList(String id);
 
-    void editCategory(CategoryDTO categoryDTO);
+    Category editCategory(CategoryDTO categoryDTO);
 
     void deleteCategory(CategoryDTO categoryDTO);
 }
