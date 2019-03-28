@@ -6,6 +6,8 @@ public class CategoryView {
 
     public static class EDIT {}
 
+    public static class DELETE {}
+
     public static class LIST {}
 
 }

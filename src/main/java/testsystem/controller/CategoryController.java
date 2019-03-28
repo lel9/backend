@@ -32,6 +32,13 @@ public class CategoryController {
         categoryService.editCategory(categoryDTO);
     }
 
+    @PostMapping("/category/delete")
+    @ResponseStatus(HttpStatus.OK)
+    @JsonView(CategoryView.DELETE.class)
+    public void deleteCategory(@RequestBody @Valid CategoryDTO categoryDTO) {
+        categoryService.deleteCategory(categoryDTO);
+    }
+
     @GetMapping("/category/list")
     @JsonView(CategoryView.LIST.class)
     public CategoryListDTO getCategoryList() {

@@ -16,7 +16,7 @@ public class CategoryDTO {
 
     @NotNull
     @NotEmpty
-    @JsonView({CategoryView.EDIT.class, CategoryView.LIST.class})
+    @JsonView({CategoryView.EDIT.class, CategoryView.DELETE.class, CategoryView.LIST.class})
     private String id;
 
     @NotNull

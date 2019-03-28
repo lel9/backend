@@ -76,6 +76,13 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.save(category);
     }
 
+    @Override
+    public void deleteCategory(CategoryDTO categoryDTO) {
+        UUID uuid = validateId(categoryDTO.getId());
+        Category category = validateCategoryExists(uuid);
+        categoryRepository.delete(category);
+    }
+
     private UUID validateId(String id) {
         UUID uuid;
         try {
