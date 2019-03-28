@@ -1,6 +1,5 @@
 package testsystem.dto;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +12,5 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class CategoryListDTO {
 
-    @JsonView({CategoryView.LIST.class})
     private List<CategoryDTO> categories;
 }
