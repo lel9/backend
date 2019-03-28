@@ -46,7 +46,9 @@ public class CategoryController {
 
     @GetMapping("/categories/{id}/tasks")
     @ResponseStatus(HttpStatus.OK)
-    public TaskListDTO getTaskList(@PathVariable String id) {
-        return categoryService.getTasksList(id);
+    public TaskListDTO getTaskList(@PathVariable String id,
+                                   @RequestParam(value = "page", defaultValue = "0") int page,
+                                   @RequestParam(value = "limit", defaultValue = "15") int limit) {
+        return categoryService.getTasksList(id, page, limit);
     }
 }

@@ -11,5 +11,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class TaskListDTO {
+    private int total;
+    private String name;
     private List<TaskDTO> tasks;
 }

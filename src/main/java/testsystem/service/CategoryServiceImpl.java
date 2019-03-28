@@ -1,6 +1,10 @@
 package testsystem.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import testsystem.domain.Category;
 import testsystem.domain.Task;
@@ -53,17 +57,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public TaskListDTO getTasksList(String id) {
+    public TaskListDTO getTasksList(String id, int page, int limit) {
         UUID uuid = validateId(id);
         Category category = validateCategoryExists(uuid);
-        List<Task> tasks = taskRepository.findByCategory(category);
+
+        Pageable pageableRequest = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "name"));
+        Page<Task> tasks = taskRepository.findByCategory(category, pageableRequest);
 
         List<TaskDTO> list = new ArrayList<>();
         tasks.forEach(task -> list.add(
                 new TaskDTO(task.getId().toString(), task.getName())
         ));
 
-        return new TaskListDTO(list);
+        return new TaskListDTO(tasks.getTotalPages(), category.getName(), list);
     }
 
     @Override
