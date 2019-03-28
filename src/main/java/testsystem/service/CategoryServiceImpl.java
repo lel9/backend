@@ -30,9 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void addNewCategory(CategoryDTO categoryDTO) {
         Category category = Category.fromCategoryDTO(categoryDTO);
-        if (categoryRepository.findByName(category.getName()) != null) {
-            throw new CategoryAlreadyExistsException(category.getName());
-        }
+        validateCategoryNameExists(category.getName());
         categoryRepository.save(category);
     }
 
@@ -42,12 +40,13 @@ public class CategoryServiceImpl implements CategoryService {
 
         List<CategoryDTO> list = new ArrayList<>();
 
-        all.forEach(category -> {
-            list.add(new CategoryDTO(
-                    category.getId().toString(),
-                    category.getName(),
-                    taskRepository.findByCategory(category).size()));
-        });
+        all.forEach(category -> list.add(
+                new CategoryDTO(
+                        category.getId().toString(),
+                        category.getName(),
+                        category.getTasks().size()
+                )
+        ));
 
         return new CategoryListDTO(list);
 
@@ -55,27 +54,56 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public TaskListDTO getTasksList(String id) {
+        UUID uuid = validateId(id);
+        Category category = validateCategoryExists(uuid);
+        List<Task> tasks = taskRepository.findByCategory(category);
+
+        List<TaskDTO> list = new ArrayList<>();
+        tasks.forEach(task -> list.add(
+                new TaskDTO(task.getId().toString(), task.getName())
+        ));
+
+        return new TaskListDTO(list);
+    }
+
+    @Override
+    public void editCategory(CategoryDTO categoryDTO) {
+        UUID uuid = validateId(categoryDTO.getId());
+        Category category = validateCategoryExists(uuid);
+        if (!category.getName().equals(categoryDTO.getName()))
+            validateCategoryNameExists(categoryDTO.getName());
+
+        category.setName(categoryDTO.getName());
+        categoryRepository.save(category);
+    }
+
+    @Override
+    public void deleteCategory(CategoryDTO categoryDTO) {
+        UUID uuid = validateId(categoryDTO.getId());
+        Category category = validateCategoryExists(uuid);
+        categoryRepository.delete(category);
+    }
+
+    private UUID validateId(String id) {
         UUID uuid;
         try {
             uuid = UUID.fromString(id);
         } catch (IllegalArgumentException ex) {
             throw new NoSuchCategoryException();
         }
+        return uuid;
+    }
 
-        Optional<Category> categoryOptional = categoryRepository.findById(uuid);
+    private Category validateCategoryExists(UUID id) {
+        Optional<Category> categoryOptional = categoryRepository.findById(id);
         if (!categoryOptional.isPresent())
             throw new NoSuchCategoryException();
+        return categoryOptional.get();
+    }
 
-        Category category = categoryOptional.get();
-        List<Task> tasks = taskRepository.findByCategory(category);
-
-        List<TaskDTO> list = new ArrayList<>();
-        tasks.forEach(task -> {
-            list.add(new TaskDTO(
-                    task.getId().toString(), task.getName()
-                    ));
-        });
-
-        return new TaskListDTO(list);
+    private void validateCategoryNameExists(String name) {
+        if (categoryRepository.findByName(name) != null) {
+            throw new CategoryAlreadyExistsException(name);
+        }
     }
 }

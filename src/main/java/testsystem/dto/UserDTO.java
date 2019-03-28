@@ -34,19 +34,19 @@ public class UserDTO {
         return user;
     }
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = "Имя пользователя должно быть задано")
+    @NotEmpty(message = "Имя пользователя не должно быть пусто")
     @JsonView({UserView.REST.class, UserView.UI.class})
     private String username;
 
-    @NotNull
-    @NotEmpty
-    @Email
+    @NotNull(message = "Email должен быть задан")
+    @NotEmpty(message = "Email не должен быть пуст")
+    @Email(message = "Email должен соответствовать формату example@mail.com")
     @JsonView({UserView.REST.class})
     private String email;
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = "Пароль должен быть задан")
+    @NotEmpty(message = "Пароль не должен быть пуст")
     @JsonView({UserView.REST.class})
     private String password;
 

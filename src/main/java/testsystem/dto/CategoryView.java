@@ -2,8 +2,10 @@ package testsystem.dto;
 
 public class CategoryView {
 
-    public static class ADD {}
+    public interface ADD {}
 
-    public static class LIST {}
+    public interface EDIT {}
+
+    public interface DELETE {}
 
 }
