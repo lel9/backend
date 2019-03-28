@@ -2,10 +2,11 @@ package testsystem.service;
 
 import testsystem.domain.EmailToken;
 import testsystem.domain.User;
+import testsystem.dto.UserDTO;
 
 public interface UserService {
 
-    User registerUser(User user);
+    User registerUser(UserDTO userDTO);
 
     User findByUsername(String username);
 

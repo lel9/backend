@@ -34,6 +34,16 @@ public class UserDTO {
         return user;
     }
 
+    public static UserDTO user(String username,
+                               String email,
+                               String password) {
+        UserDTO user = new UserDTO();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(password);
+        return user;
+    }
+
     @NotNull(message = "Имя пользователя должно быть задано")
     @NotEmpty(message = "Имя пользователя не должно быть пусто")
     @JsonView({UserView.REST.class, UserView.UI.class})

@@ -31,11 +31,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private final UserRole role = UserRole.user;
 
-    @OneToOne(targetEntity = Profile.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = Profile.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(nullable = false, name = "profile_id")
     private Profile profile;
 
-    private User(String username, String email, String password_hash) {
+    public User(String username, String email, String password_hash) {
         this.username = username;
         this.email = email;
         this.password_hash = password_hash;
