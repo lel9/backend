@@ -15,6 +15,6 @@ public class CategoryDTO {
 
     @NotNull
     @NotEmpty
-    private String category;
+    private String name;
 
 }

@@ -27,6 +27,6 @@ public class Category {
     private String name;
 
     public static Category fromCategoryDTO(CategoryDTO categoryDTO) {
-        return new Category(categoryDTO.getCategory());
+        return new Category(categoryDTO.getName());
     }
 }
