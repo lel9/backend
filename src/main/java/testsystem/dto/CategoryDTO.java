@@ -14,16 +14,17 @@ import javax.validation.constraints.NotNull;
 public class CategoryDTO {
 
     @NotNull(message = "Идентификатор категории должен быть задан",
-             groups = {CategoryView.DELETE.class, CategoryView.EDIT.class})
+             groups = {CategoryGroup.DELETE.class, CategoryGroup.EDIT.class})
     @NotEmpty(message = "Идентификатор категории не должен быть пуст",
-              groups = {CategoryView.DELETE.class, CategoryView.EDIT.class})
+              groups = {CategoryGroup.DELETE.class, CategoryGroup.EDIT.class})
     private String id;
 
     @NotNull(message = "Название категории должно быть задано",
-             groups = {CategoryView.ADD.class, CategoryView.EDIT.class})
+             groups = {CategoryGroup.ADD.class, CategoryGroup.EDIT.class})
     @NotEmpty(message = "Название категории не должно быть пусто",
-              groups = {CategoryView.ADD.class, CategoryView.EDIT.class})
+              groups = {CategoryGroup.ADD.class, CategoryGroup.EDIT.class})
     private String name;
 
     private int count;
+
 }

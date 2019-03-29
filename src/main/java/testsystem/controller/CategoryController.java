@@ -6,8 +6,8 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import testsystem.dto.CategoryDTO;
+import testsystem.dto.CategoryGroup;
 import testsystem.dto.CategoryListDTO;
-import testsystem.dto.CategoryView;
 import testsystem.dto.TaskListDTO;
 import testsystem.service.CategoryServiceImpl;
 
@@ -20,21 +20,21 @@ public class CategoryController {
     @PostMapping("/category/add")
     @ResponseStatus(HttpStatus.CREATED)
     @Secured("ROLE_ADMIN")
-    public void addNewCategory(@RequestBody @Validated(CategoryView.ADD.class) CategoryDTO categoryDTO) {
+    public void addNewCategory(@RequestBody @Validated(CategoryGroup.ADD.class) CategoryDTO categoryDTO) {
         categoryService.addNewCategory(categoryDTO);
     }
 
     @PostMapping("/category/edit")
     @ResponseStatus(HttpStatus.OK)
     @Secured("ROLE_ADMIN")
-    public void editCategory(@RequestBody @Validated(CategoryView.EDIT.class) CategoryDTO categoryDTO) {
+    public void editCategory(@RequestBody @Validated(CategoryGroup.EDIT.class) CategoryDTO categoryDTO) {
         categoryService.editCategory(categoryDTO);
     }
 
     @PostMapping("/category/delete")
     @ResponseStatus(HttpStatus.OK)
     @Secured("ROLE_ADMIN")
-    public void deleteCategory(@RequestBody @Validated(CategoryView.DELETE.class) CategoryDTO categoryDTO) {
+    public void deleteCategory(@RequestBody @Validated(CategoryGroup.DELETE.class) CategoryDTO categoryDTO) {
         categoryService.deleteCategory(categoryDTO);
     }
 
@@ -48,7 +48,7 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.OK)
     public TaskListDTO getTaskList(@PathVariable String id,
                                    @RequestParam(value = "page", defaultValue = "0") int page,
-                                   @RequestParam(value = "limit", defaultValue = "15") int limit) {
+                                   @RequestParam(value = "limit", defaultValue = "12") int limit) {
         return categoryService.getTasksList(id, page, limit);
     }
 }

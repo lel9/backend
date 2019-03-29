@@ -16,7 +16,7 @@ import java.util.UUID;
 @Table(name = "categories")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
+@NoArgsConstructor(access = AccessLevel.PUBLIC, force = true)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class Category {
     @Id

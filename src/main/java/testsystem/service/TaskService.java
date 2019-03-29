@@ -1,12 +1,8 @@
 package testsystem.service;
 
-import testsystem.domain.Category;
-import testsystem.dto.CategoryDTO;
-
-import java.util.List;
+import testsystem.dto.TaskDescriptionDTO;
 
 public interface TaskService {
-    void addNewCategory(Category category);
 
-    List<CategoryDTO> getCategoriesList();
+    TaskDescriptionDTO getTask(String id);
 }
