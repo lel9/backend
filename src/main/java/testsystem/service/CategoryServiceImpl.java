@@ -90,7 +90,7 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.delete(category);
     }
 
-    private UUID validateId(String id) {
+    public UUID validateId(String id) {
         UUID uuid;
         try {
             uuid = UUID.fromString(id);
@@ -100,7 +100,7 @@ public class CategoryServiceImpl implements CategoryService {
         return uuid;
     }
 
-    private Category validateCategoryExists(UUID id) {
+    public Category validateCategoryExists(UUID id) {
         Optional<Category> categoryOptional = categoryRepository.findById(id);
         if (!categoryOptional.isPresent())
             throw new NoSuchCategoryException();

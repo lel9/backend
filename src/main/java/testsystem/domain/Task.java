@@ -14,12 +14,12 @@ import java.util.UUID;
 @Table(name = "tasks")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
+@NoArgsConstructor(access = AccessLevel.PUBLIC, force = true)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class Task {
     @Id
     @GeneratedValue
-    private UUID id = UUID.randomUUID();
+    private final UUID id = UUID.randomUUID();
 
     private String name;
 
@@ -33,5 +33,15 @@ public class Task {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "task", orphanRemoval = true)
     private List<Limit> limits;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "task", orphanRemoval = true)
+    private List<Test> tests;
+
+    public Task(String name, String description, String report_permission, Category category) {
+        this.name = name;
+        this.description = description;
+        this.report_permission = report_permission;
+        this.category = category;
+    }
 
 }

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import testsystem.exception.*;
+import testsystem.exception.zip.TestFileIOException;
+import testsystem.exception.zip.ZipFileException;
 import testsystem.util.GenericResponse;
 
 @ControllerAdvice
@@ -55,6 +57,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler({ZipFileException.class})
+    public ResponseEntity<Object> TestFileZip(final RuntimeException ex, final WebRequest request) {
+        final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "ZipError");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
     // 403
     @ExceptionHandler({ AccessDeniedException.class })
     public ResponseEntity<Object> handleAccessDenied(final RuntimeException ex, final WebRequest request) {
@@ -81,7 +89,19 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
+    @ExceptionHandler({ TaskAlreadyExistsException.class })
+    public ResponseEntity<Object> handleTaskAlreadyExist(final RuntimeException ex, final WebRequest request) {
+        final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "TaskAlreadyExists");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
     // 500
+    @ExceptionHandler({ TestFileIOException.class })
+    public ResponseEntity<Object> TestFileIO(final RuntimeException ex, final WebRequest request) {
+        final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "IOError");
+        return new ResponseEntity<Object>(bodyOfResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler({ Exception.class })
     public ResponseEntity<Object> handleInternal(final RuntimeException ex, final WebRequest request) {
         final GenericResponse bodyOfResponse = new GenericResponse("Внутренняя ошибка сервера", "InternalError");
