@@ -34,30 +34,40 @@ public class UserDTO {
         return user;
     }
 
-    @NotNull
-    @NotEmpty
-    @JsonView({View.REST.class, View.UI.class})
+    public static UserDTO user(String username,
+                               String email,
+                               String password) {
+        UserDTO user = new UserDTO();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(password);
+        return user;
+    }
+
+    @NotNull(message = "Имя пользователя должно быть задано")
+    @NotEmpty(message = "Имя пользователя не должно быть пусто")
+    @JsonView({UserView.REST.class, UserView.UI.class})
     private String username;
 
-    @NotNull
-    @NotEmpty
-    @Email
-    @JsonView({View.REST.class})
+    @NotNull(message = "Email должен быть задан")
+    @NotEmpty(message = "Email не должен быть пуст")
+    @Email(message = "Email должен соответствовать формату example@mail.com")
+    @JsonView({UserView.REST.class})
     private String email;
 
-    @NotNull
-    @NotEmpty
-    @JsonView({View.REST.class})
+    @NotNull(message = "Пароль должен быть задан")
+    @NotEmpty(message = "Пароль не должен быть пуст")
+    @JsonView({UserView.REST.class})
     private String password;
 
-    @JsonView({View.UI.class})
+    @JsonView({UserView.UI.class})
     private String role;
 
     private Tokens tokens = new Tokens();
 
     @Data
     private static class Tokens {
-        @JsonView({View.UI.class})
+        @JsonView({UserView.UI.class})
         private String access_token;
     }
 

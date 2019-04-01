@@ -3,7 +3,7 @@ package testsystem.util;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.validation.FieldError;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.validation.ObjectError;
 
 import java.util.List;
@@ -23,14 +23,10 @@ public class GenericResponse {
 
     public GenericResponse(List<ObjectError> allErrors, String error) {
         this.type = error;
-        String temp = allErrors.stream().map(e -> {
-            if (e instanceof FieldError) {
-                return "{\"field\":\"" + ((FieldError) e).getField() + "\",\"defaultMessage\":\"" + e.getDefaultMessage() + "\"}";
-            } else {
-                return "{\"object\":\"" + e.getObjectName() + "\",\"defaultMessage\":\"" + e.getDefaultMessage() + "\"}";
-            }
-        }).collect(Collectors.joining(","));
-        this.message = "[" + temp + "]";
+        this.message = allErrors
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.joining(System.lineSeparator()));
     }
 
 }

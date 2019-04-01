@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import testsystem.dto.UserDTO;
 
@@ -14,7 +15,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import static testsystem.security.SecurityConstants.HEADER_STRING;
 
@@ -35,8 +35,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             user.getUsername(),
-                            user.getPassword(),
-                            new ArrayList<>())
+                            user.getPassword())
             );
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -48,6 +47,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse res,
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
         String token = JWTFactory.create(((CustomUserDetails) auth.getPrincipal()).getUsername());
         res.addHeader(HEADER_STRING, token);
@@ -62,6 +63,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         String body = mapper.writeValueAsString(userDTO);
 
+        res.setHeader("Content-type", "application/json; charset=utf-8");
         res.getWriter().write(body);
     }
 }

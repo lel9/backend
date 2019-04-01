@@ -12,7 +12,7 @@ import testsystem.domain.EmailToken;
 import testsystem.domain.User;
 import testsystem.dto.EmailTokenDTO;
 import testsystem.dto.UserDTO;
-import testsystem.dto.View;
+import testsystem.dto.UserView;
 import testsystem.event.OnRegistrationCompleteEvent;
 import testsystem.exception.EmailTokenIsExpiredException;
 import testsystem.exception.NoSuchEmailTokenException;
@@ -21,6 +21,7 @@ import testsystem.service.UserServiceImpl;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import static testsystem.security.SecurityConstants.SIGN_UP_CONFIRM_URL;
 import static testsystem.security.SecurityConstants.SIGN_UP_URL;
 
 @RestController
@@ -35,7 +36,7 @@ public class RegistrationController {
     @PostMapping(SIGN_UP_URL)
     @ResponseStatus(HttpStatus.CREATED)
     public void signUp(@RequestBody @Valid UserDTO user, HttpServletRequest request) {
-        User registeredUser = userService.registerUser(User.fromUserDTO(user));
+        User registeredUser = userService.registerUser(user);
 
         String appUrl = request.getContextPath();
         eventPublisher.publishEvent(new OnRegistrationCompleteEvent(
@@ -44,8 +45,8 @@ public class RegistrationController {
         );
     }
 
-    @PostMapping("/register/confirm")
-    @JsonView(View.UI.class)
+    @PostMapping(SIGN_UP_CONFIRM_URL)
+    @JsonView(UserView.UI.class)
     @ResponseStatus(HttpStatus.OK)
     public UserDTO confirmRegistration(@RequestBody @Valid EmailTokenDTO token) {
 
