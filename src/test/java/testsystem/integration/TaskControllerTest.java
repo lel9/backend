@@ -72,6 +72,80 @@ public class TaskControllerTest {
     }
 
     @Test
+    public void getTasksListByCategoryFail() throws Exception {
+        this.mvc.perform(Utils.makeGetRequest("/tasks?id=" + UUID.randomUUID()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.type", Matchers.is("NoSuchCategory")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Категория не найдена")));
+    }
+
+    @Test
+    public void getTasksListByCategoryEmpty() throws Exception {
+        Category category = new Category("cat1");
+        Category saved = categoryRepository.save(category);
+
+        this.mvc.perform(Utils.makeGetRequest("/tasks?id=" + saved.getId()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.total", Matchers.is(0)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is("cat1")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tasks", Matchers.hasSize(0)));
+    }
+
+    @Test
+    public void getTasksListByCategoryIdPage0Limit2() throws Exception {
+        Category category = new Category("cat1");
+        Task task1 = new Task("task1", "desc1", "no_access", category);
+        Task task2 = new Task("task2", "desc2", "no_access", category);
+        category.setTasks(Arrays.asList(task1, task2));
+
+        Category saved = categoryRepository.save(category);
+
+        this.mvc.perform(Utils.makeGetRequest("/tasks?id=" + saved.getId() + "&page=0&limit=2"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.total", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is("cat1")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tasks", Matchers.hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tasks[0].name", Matchers.is("task1")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tasks[1].name", Matchers.is("task2")));
+    }
+
+    @Test
+    public void getTasksListByCategoryIdPage0Limit1() throws Exception {
+        Category category = new Category("cat1");
+        Task task1 = new Task("task1", "desc1", "no_access", category);
+        Task task2 = new Task("task2", "desc2", "no_access", category);
+        category.setTasks(Arrays.asList(task1, task2));
+
+        Category saved = categoryRepository.save(category);
+
+        this.mvc.perform(Utils.makeGetRequest("/tasks?id=" + saved.getId() + "&page=0&limit=1"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.total", Matchers.is(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is("cat1")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tasks", Matchers.hasSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tasks[0].name", Matchers.is("task1")));
+    }
+
+    @Test
+    public void getUncategorizedTasksList() throws Exception {
+        taskRepository.save(new Task("task1", "desc1", "no_access", null));
+        taskRepository.save(new Task("task2", "desc2", "no_access", null));
+
+        this.mvc.perform(Utils.makeGetRequest("/tasks?categorized=false"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.total", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.nullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tasks", Matchers.hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tasks[0].name", Matchers.is("task1")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tasks[1].name", Matchers.is("task2")));
+    }
+
+    @Test
     public void addTaskWithoutLimitsSuccess() throws Exception {
         Category category = categoryRepository.save(new Category("name"));
 
