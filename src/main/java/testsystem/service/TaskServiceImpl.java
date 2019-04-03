@@ -2,6 +2,10 @@ package testsystem.service;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import testsystem.domain.*;
@@ -34,6 +38,26 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private CategoryServiceImpl categoryService;
+
+    @Override
+    public TaskListDTO getTasksList(String id, int page, int limit, boolean categorized) {
+        Category category = null;
+
+        if (categorized) {
+            UUID uuid = validateId(id);
+            category = categoryService.validateCategoryExists(uuid);
+        }
+
+        Pageable pageableRequest = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "name"));
+        Page<Task> tasks = taskRepository.findByCategory(category, pageableRequest);
+
+        List<TaskDTO> list = new ArrayList<>();
+        tasks.forEach(task -> list.add(
+                new TaskDTO(task.getId().toString(), task.getName())
+        ));
+
+        return new TaskListDTO(tasks.getTotalPages(), category != null ? category.getName() : null, list);
+    }
 
     @Override
     public TaskDescriptionDTO getTask(String id) {
