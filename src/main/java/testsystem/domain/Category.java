@@ -32,4 +32,9 @@ public class Category {
     public static Category fromCategoryDTO(CategoryDTO categoryDTO) {
         return new Category(categoryDTO.getName(), new ArrayList<>());
     }
+
+    public Category(String name) {
+        this.name = name;
+        this.tasks = new ArrayList<>();
+    }
 }

@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service;
 import testsystem.domain.EmailToken;
 import testsystem.domain.Profile;
 import testsystem.domain.User;
+import testsystem.dto.EmailTokenDTO;
 import testsystem.dto.UserDTO;
 import testsystem.exception.EmailAlreadyExistsException;
+import testsystem.exception.EmailTokenIsExpiredException;
+import testsystem.exception.NoSuchEmailTokenException;
 import testsystem.exception.UserAlreadyExistsException;
 import testsystem.repository.EmailTokenRepository;
 import testsystem.repository.ProfileRepository;
@@ -55,18 +58,33 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
+    @Override
+    public UserDTO verificateUser(EmailTokenDTO token) {
+        EmailToken verificationToken = this.getVerificationToken(token.getToken());
+        if (verificationToken == null) {
+            throw new NoSuchEmailTokenException();
+        }
+
+        if (verificationToken.isTokenExpired()) {
+            throw new EmailTokenIsExpiredException();
+        }
+
+        User user = verificationToken.getUser();
+        this.activateUser(user);
+
+        return UserDTO.userWithoutEmailAndWithoutToken(
+                user.getUsername(),
+                user.getRole().toString()
+        );
+    }
+
     private boolean emailExist(String email) {
         User user = userRepository.findByEmail(email);
         return user != null;
     }
 
-    @Override
-    public User findUserByVerificationToken(String verificationToken) {
-        return tokenRepository.findByToken(verificationToken).getUser();
-    }
 
-    @Override
-    public EmailToken getVerificationToken(String token) {
+    private EmailToken getVerificationToken(String token) {
         return tokenRepository.findByToken(token);
     }
 
