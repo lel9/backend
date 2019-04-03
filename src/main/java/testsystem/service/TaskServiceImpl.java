@@ -260,11 +260,13 @@ public class TaskServiceImpl implements TaskService {
 
     private List<LimitDTO> getLimitsDTO(Task task) {
         List<LimitDTO> limits = new ArrayList<>();
-        task.getLimits().forEach(limit ->
-            limits.add(
-                    new LimitDTO(limit.getProgramming_language().toString(), limit.getMemory_limit(), limit.getTime_limit())
-            )
-        );
+        if (task.getLimits() != null) {
+            task.getLimits().forEach(limit ->
+                limits.add(
+                        new LimitDTO(limit.getProgramming_language().toString(), limit.getMemory_limit(), limit.getTime_limit())
+                )
+            );
+        }
         return limits;
     }
 

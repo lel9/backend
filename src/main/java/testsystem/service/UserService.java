@@ -1,8 +1,11 @@
 package testsystem.service;
 
-import testsystem.domain.EmailToken;
 import testsystem.domain.User;
+<<<<<<< HEAD
 import testsystem.dto.ResultDTO;
+=======
+import testsystem.dto.EmailTokenDTO;
+>>>>>>> refactoring, integration tests
 import testsystem.dto.UserDTO;
 
 import java.util.List;
@@ -13,9 +16,7 @@ public interface UserService {
 
     User findByUsername(String username);
 
-    User findUserByVerificationToken(String verificationToken);
-
-    EmailToken getVerificationToken(String token);
+    UserDTO verificateUser(EmailTokenDTO token);
 
     void createEmailToken(User user, String token);
 
