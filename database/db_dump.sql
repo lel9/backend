@@ -192,7 +192,7 @@ CREATE TABLE public.tasks (
     name text NOT NULL,
     description text,
     report_permission text NOT NULL,
-    category_id uuid NOT NULL,
+    category_id uuid,
     owner_id uuid NOT NULL
 );
 
