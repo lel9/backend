@@ -6,16 +6,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import testsystem.domain.*;
 import testsystem.dto.*;
-import testsystem.exception.NoSuchTaskException;
-import testsystem.exception.TaskAlreadyExistsException;
+import testsystem.exception.*;
 import testsystem.exception.zip.*;
 import testsystem.repository.LimitRepository;
 import testsystem.repository.TaskRepository;
 import testsystem.repository.TestRepository;
+import testsystem.repository.UserSolutionRepository;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -37,7 +38,16 @@ public class TaskServiceImpl implements TaskService {
     private TestRepository testRepository;
 
     @Autowired
+    private UserSolutionRepository userSolutionRepository;
+
+    @Autowired
     private CategoryServiceImpl categoryService;
+
+    @Autowired
+    private UserServiceImpl userService;
+
+    @Autowired
+    private TestsystemService testsystemService;
 
     @Override
     public TaskListDTO getTasksList(String id, int page, int limit, boolean categorized) {
@@ -110,6 +120,32 @@ public class TaskServiceImpl implements TaskService {
         limitRepository.save(limitPython);
 
         return taskRepository.findById(saved.getId()).get();
+    }
+
+    @Override
+    public void addSolution(TaskDTO taskDTO, MultipartFile multipartFile) {
+
+        User currentUser = getCurrentUser();
+
+        UUID uuid = validateId(taskDTO.getId());
+        Task task = validateTaskExists(uuid);
+
+        Answer answer = getAnswer(multipartFile);
+
+        Status status = new Status();
+
+        UserSolution solution = new UserSolution(currentUser, task, answer, status);
+
+        UserSolution saved = userSolutionRepository.save(solution);
+
+        try {
+            if (testsystemService.sendRequestToTestingServer(saved.getId().toString()) != 200) {
+                userSolutionRepository.delete(saved);
+            }
+        } catch (IOException e) {
+            userSolutionRepository.delete(saved);
+            throw new TestsystemRequestException();
+        }
     }
 
     private List<Test> unzipFileAndGetTests(MultipartFile multipartFile) {
@@ -240,5 +276,43 @@ public class TaskServiceImpl implements TaskService {
             }
         }
         return textBuilder.toString();
+    }
+
+    private Answer getAnswer(MultipartFile multipartFile) {
+        String extension = getExtension(multipartFile.getOriginalFilename());
+        ProgrammingLanguage language = getLanguageFromExtension(extension);
+
+        String text;
+        try {
+            text = new String(multipartFile.getBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new SolutionFileIOError();
+        }
+
+        return new Answer(text, language);
+    }
+
+    private User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userService.findByUsername(username);
+    }
+
+    private String getExtension(String name) {
+        if (name == null)
+            throw new UnknownLanguageException();
+        String[] split = name.split("\\.");
+        if (split.length < 2)
+            throw new UnknownLanguageException();
+        return split[split.length-1];
+    }
+
+    private ProgrammingLanguage getLanguageFromExtension(String ext) {
+        if (ext.equals("cpp"))
+            return ProgrammingLanguage.cpp;
+        if (ext.equals("c"))
+            return ProgrammingLanguage.c;
+        if (ext.equals("py"))
+            return ProgrammingLanguage.python;
+        throw new UnknownLanguageException();
     }
 }
