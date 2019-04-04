@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import testsystem.dto.CategoryDTO;
 import testsystem.dto.CategoryGroup;
 import testsystem.dto.CategoryListDTO;
-import testsystem.dto.TaskListDTO;
 import testsystem.service.CategoryServiceImpl;
 
 @RestController
@@ -42,13 +41,5 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.OK)
     public CategoryListDTO getCategoryList() {
         return categoryService.getCategoriesList();
-    }
-
-    @GetMapping("/categories/{id}/tasks")
-    @ResponseStatus(HttpStatus.OK)
-    public TaskListDTO getTaskList(@PathVariable String id,
-                                   @RequestParam(value = "page", defaultValue = "0") int page,
-                                   @RequestParam(value = "limit", defaultValue = "12") int limit) {
-        return categoryService.getTasksList(id, page, limit);
     }
 }
