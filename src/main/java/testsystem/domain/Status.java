@@ -1,10 +1,7 @@
 package testsystem.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -12,7 +9,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "status")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Data
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC, force = true)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class Status {
@@ -22,10 +20,12 @@ public class Status {
 
     private String result = "Ожидает проверки";
 
-    @OneToOne(targetEntity = Test.class, fetch = FetchType.EAGER)
+    private Integer passed;
+
+    @OneToOne(targetEntity = Test.class, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "error_test_id")
     private Test error_test;
 
-    private String extended_information; // todo json mapper
+    private String extended_information;
 
 }

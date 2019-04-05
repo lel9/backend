@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import testsystem.domain.*;
@@ -111,7 +110,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void addSolution(TaskDTO taskDTO, MultipartFile multipartFile) {
 
-        User currentUser = getCurrentUser();
+        User currentUser = userService.getCurrentUser();
+
+        Long date = System.currentTimeMillis();
 
         UUID uuid = validateId(taskDTO.getId());
         Task task = validateTaskExists(uuid);
@@ -120,7 +121,7 @@ public class TaskServiceImpl implements TaskService {
 
         Status status = new Status();
 
-        UserSolution solution = new UserSolution(currentUser, task, answer, status);
+        UserSolution solution = new UserSolution(date, currentUser, task, answer, status);
 
         UserSolution saved = userSolutionRepository.save(solution);
 
@@ -319,11 +320,6 @@ public class TaskServiceImpl implements TaskService {
         }
 
         return new Answer(text, language);
-    }
-
-    private User getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userService.findByUsername(username);
     }
 
     private String getExtension(String name) {

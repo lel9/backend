@@ -1,15 +1,17 @@
 package testsystem.domain;
 
 import lombok.AccessLevel;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
 @Table(name = "email_tokens")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class EmailToken {
     private static final long EXPIRATION = 60 * 60 * 24; // 24 часа
