@@ -62,33 +62,6 @@ public class CategoryTest {
         Mockito.verifyNoMoreInteractions(repositoryMock);
     }
 
-    @Test
-    public void deleteCategoryIfExists() {
-        CategoryDTO categoryDTO = new CategoryDTO(category1.getId().toString(), null, 0);
-        Mockito.when(repositoryMock.findById(category1.getId())).thenReturn(Optional.of(category1));
-
-        categoryService.deleteCategory(categoryDTO);
-
-        Mockito.verify(repositoryMock, Mockito.times(1)).findById(category1.getId());
-        Mockito.verify(repositoryMock, Mockito.times(1)).delete(Mockito.argThat(argument -> {
-            Assert.assertEquals(category1.getName(), argument.getName());
-            return true;
-        }));
-
-        Mockito.verifyNoMoreInteractions(repositoryMock);
-    }
-
-    @Test(expected = NoSuchCategoryException.class)
-    public void deleteCategoryIfNotExists() {
-        CategoryDTO categoryDTO = new CategoryDTO(category1.getId().toString(), null, 0);
-        Mockito.when(repositoryMock.findById(category1.getId())).thenReturn(Optional.empty());
-
-        categoryService.deleteCategory(categoryDTO);
-
-        Mockito.verify(repositoryMock, Mockito.times(1)).findById(category1.getId());
-        Mockito.verifyNoMoreInteractions(repositoryMock);
-    }
-
     @Test(expected = NoSuchCategoryException.class)
     public void deleteCategoryIfNotExists2() {
         CategoryDTO categoryDTO = new CategoryDTO("123", null, 0);
