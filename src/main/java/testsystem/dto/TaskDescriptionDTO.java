@@ -17,4 +17,5 @@ public class TaskDescriptionDTO {
     private TaskCategoryDTO category;
     private List<LanguageDTO> languages;
     private List<LimitDTO> limits;
+    private List<ExampleDTO> examples;
 }

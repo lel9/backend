@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import testsystem.dto.TaskDTO;
 import testsystem.dto.TaskDescriptionDTO;
 import testsystem.dto.TaskListDTO;
 import testsystem.dto.TaskNewDTO;
@@ -37,5 +38,13 @@ public class TaskController {
     public void addTask(@Valid TaskNewDTO taskNewDTO,
                         @RequestParam("tests") @Valid @NotNull(message = "Файл с тестами должен быть задан") MultipartFile file) {
         taskService.addTask(taskNewDTO, file);
+    }
+
+    @PostMapping(value = "/task/solution", consumes = {"multipart/form-data"})
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addSolution(@Valid TaskDTO taskDTO,
+                            @RequestParam("solution") @Valid @NotNull(message = "Файл с решением должен быть задан")
+                                        MultipartFile file) {
+        taskService.addSolution(taskDTO, file);
     }
 }

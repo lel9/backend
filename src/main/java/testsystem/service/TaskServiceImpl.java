@@ -6,16 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import testsystem.domain.*;
 import testsystem.dto.*;
-import testsystem.exception.NoSuchTaskException;
-import testsystem.exception.TaskAlreadyExistsException;
+import testsystem.exception.*;
 import testsystem.exception.zip.*;
-import testsystem.repository.LimitRepository;
-import testsystem.repository.TaskRepository;
-import testsystem.repository.TestRepository;
+import testsystem.repository.*;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -37,7 +35,19 @@ public class TaskServiceImpl implements TaskService {
     private TestRepository testRepository;
 
     @Autowired
+    private ExampleRepository exampleRepository;
+
+    @Autowired
+    private UserSolutionRepository userSolutionRepository;
+
+    @Autowired
     private CategoryServiceImpl categoryService;
+
+    @Autowired
+    private UserServiceImpl userService;
+
+    @Autowired
+    private TestsystemService testsystemService;
 
     @Override
     public TaskListDTO getTasksList(String id, int page, int limit, boolean categorized) {
@@ -70,8 +80,9 @@ public class TaskServiceImpl implements TaskService {
         TaskCategoryDTO category = getCategoryDTO(task);
         List<LanguageDTO> languages = getTotalLanguages();
         List<LimitDTO> limits = getLimitsDTO(task);
+        List<ExampleDTO> examples = getExamplesDTO(task);
 
-        return new TaskDescriptionDTO(name, description, access, category, languages, limits);
+        return new TaskDescriptionDTO(name, description, access, category, languages, limits, examples);
     }
 
     @Override
@@ -90,26 +101,70 @@ public class TaskServiceImpl implements TaskService {
         List<Test> tests = unzipFileAndGetTests(file);
         Task saved = taskRepository.save(task);
 
+        saveTests(saved, tests);
+        saveLimits(saved, taskDTO);
+        saveExamples(saved, taskDTO);
+
+        return taskRepository.findById(saved.getId()).get();
+    }
+
+    @Override
+    public void addSolution(TaskDTO taskDTO, MultipartFile multipartFile) {
+
+        User currentUser = getCurrentUser();
+
+        UUID uuid = validateId(taskDTO.getId());
+        Task task = validateTaskExists(uuid);
+
+        Answer answer = getAnswer(multipartFile);
+
+        Status status = new Status();
+
+        UserSolution solution = new UserSolution(currentUser, task, answer, status);
+
+        UserSolution saved = userSolutionRepository.save(solution);
+
+        try {
+            if (testsystemService.sendRequestToTestingServer(saved.getId().toString()) != 200) {
+                userSolutionRepository.delete(saved);
+            }
+        } catch (IOException e) {
+            userSolutionRepository.delete(saved);
+            throw new TestsystemRequestException();
+        }
+    }
+
+    private void saveTests(Task task, List<Test> tests) {
         tests.forEach(test -> {
-            test.setTask(saved);
+            test.setTask(task);
             testRepository.save(test);
         });
+    }
 
+    private void saveLimits(Task task, TaskNewDTO taskDTO) {
         Limit limitC = new Limit(
-                taskDTO.getMemory_limit_c(), taskDTO.getTime_limit_c(), saved, ProgrammingLanguage.c
+                taskDTO.getMemory_limit_c(), taskDTO.getTime_limit_c(), task, ProgrammingLanguage.c
         );
         Limit limitCpp = new Limit(
-                taskDTO.getMemory_limit_cpp(), taskDTO.getTime_limit_cpp(), saved, ProgrammingLanguage.cpp
+                taskDTO.getMemory_limit_cpp(), taskDTO.getTime_limit_cpp(), task, ProgrammingLanguage.cpp
         );
         Limit limitPython = new Limit(
-                taskDTO.getMemory_limit_python(), taskDTO.getTime_limit_python(), saved, ProgrammingLanguage.python
+                taskDTO.getMemory_limit_python(), taskDTO.getTime_limit_python(), task, ProgrammingLanguage.python
         );
 
         limitRepository.save(limitC);
         limitRepository.save(limitCpp);
         limitRepository.save(limitPython);
+    }
 
-        return taskRepository.findById(saved.getId()).get();
+    private void saveExamples(Task task, TaskNewDTO taskDTO) {
+        if (taskDTO.getInputs() == null)
+            return;
+        int size = taskDTO.getInputs().size();
+        for (int i = 0; i < size; i++) {
+            Example example = new Example(taskDTO.getInputs().get(i), taskDTO.getOutputs().get(i), task);
+            exampleRepository.save(example);
+        }
     }
 
     private List<Test> unzipFileAndGetTests(MultipartFile multipartFile) {
@@ -204,12 +259,22 @@ public class TaskServiceImpl implements TaskService {
 
     private List<LimitDTO> getLimitsDTO(Task task) {
         List<LimitDTO> limits = new ArrayList<>();
-        task.getLimits().forEach(limit -> {
+        task.getLimits().forEach(limit ->
             limits.add(
                     new LimitDTO(limit.getProgramming_language().toString(), limit.getMemory_limit(), limit.getTime_limit())
-            );
-        });
+            )
+        );
         return limits;
+    }
+
+    private List<ExampleDTO> getExamplesDTO(Task task) {
+        List<ExampleDTO> examples = new ArrayList<>();
+        task.getExamples().forEach(example ->
+            examples.add(
+                    new ExampleDTO(example.getInput_data(), example.getOutput_data())
+            )
+        );
+        return examples;
     }
 
     private List<LanguageDTO> getTotalLanguages() {
@@ -240,5 +305,43 @@ public class TaskServiceImpl implements TaskService {
             }
         }
         return textBuilder.toString();
+    }
+
+    private Answer getAnswer(MultipartFile multipartFile) {
+        String extension = getExtension(multipartFile.getOriginalFilename());
+        ProgrammingLanguage language = getLanguageFromExtension(extension);
+
+        String text;
+        try {
+            text = new String(multipartFile.getBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new SolutionFileIOError();
+        }
+
+        return new Answer(text, language);
+    }
+
+    private User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userService.findByUsername(username);
+    }
+
+    private String getExtension(String name) {
+        if (name == null)
+            throw new UnknownLanguageException();
+        String[] split = name.split("\\.");
+        if (split.length < 2)
+            throw new UnknownLanguageException();
+        return split[split.length-1];
+    }
+
+    private ProgrammingLanguage getLanguageFromExtension(String ext) {
+        if (ext.equals("cpp"))
+            return ProgrammingLanguage.cpp;
+        if (ext.equals("c"))
+            return ProgrammingLanguage.c;
+        if (ext.equals("py"))
+            return ProgrammingLanguage.python;
+        throw new UnknownLanguageException();
     }
 }
