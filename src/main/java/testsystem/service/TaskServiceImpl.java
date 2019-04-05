@@ -13,10 +13,7 @@ import testsystem.domain.*;
 import testsystem.dto.*;
 import testsystem.exception.*;
 import testsystem.exception.zip.*;
-import testsystem.repository.LimitRepository;
-import testsystem.repository.TaskRepository;
-import testsystem.repository.TestRepository;
-import testsystem.repository.UserSolutionRepository;
+import testsystem.repository.*;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -36,6 +33,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private TestRepository testRepository;
+
+    @Autowired
+    private ExampleRepository exampleRepository;
 
     @Autowired
     private UserSolutionRepository userSolutionRepository;
@@ -80,8 +80,9 @@ public class TaskServiceImpl implements TaskService {
         TaskCategoryDTO category = getCategoryDTO(task);
         List<LanguageDTO> languages = getTotalLanguages();
         List<LimitDTO> limits = getLimitsDTO(task);
+        List<ExampleDTO> examples = getExamplesDTO(task);
 
-        return new TaskDescriptionDTO(name, description, access, category, languages, limits);
+        return new TaskDescriptionDTO(name, description, access, category, languages, limits, examples);
     }
 
     @Override
@@ -100,24 +101,9 @@ public class TaskServiceImpl implements TaskService {
         List<Test> tests = unzipFileAndGetTests(file);
         Task saved = taskRepository.save(task);
 
-        tests.forEach(test -> {
-            test.setTask(saved);
-            testRepository.save(test);
-        });
-
-        Limit limitC = new Limit(
-                taskDTO.getMemory_limit_c(), taskDTO.getTime_limit_c(), saved, ProgrammingLanguage.c
-        );
-        Limit limitCpp = new Limit(
-                taskDTO.getMemory_limit_cpp(), taskDTO.getTime_limit_cpp(), saved, ProgrammingLanguage.cpp
-        );
-        Limit limitPython = new Limit(
-                taskDTO.getMemory_limit_python(), taskDTO.getTime_limit_python(), saved, ProgrammingLanguage.python
-        );
-
-        limitRepository.save(limitC);
-        limitRepository.save(limitCpp);
-        limitRepository.save(limitPython);
+        saveTests(saved, tests);
+        saveLimits(saved, taskDTO);
+        saveExamples(saved, taskDTO);
 
         return taskRepository.findById(saved.getId()).get();
     }
@@ -145,6 +131,39 @@ public class TaskServiceImpl implements TaskService {
         } catch (IOException e) {
             userSolutionRepository.delete(saved);
             throw new TestsystemRequestException();
+        }
+    }
+
+    private void saveTests(Task task, List<Test> tests) {
+        tests.forEach(test -> {
+            test.setTask(task);
+            testRepository.save(test);
+        });
+    }
+
+    private void saveLimits(Task task, TaskNewDTO taskDTO) {
+        Limit limitC = new Limit(
+                taskDTO.getMemory_limit_c(), taskDTO.getTime_limit_c(), task, ProgrammingLanguage.c
+        );
+        Limit limitCpp = new Limit(
+                taskDTO.getMemory_limit_cpp(), taskDTO.getTime_limit_cpp(), task, ProgrammingLanguage.cpp
+        );
+        Limit limitPython = new Limit(
+                taskDTO.getMemory_limit_python(), taskDTO.getTime_limit_python(), task, ProgrammingLanguage.python
+        );
+
+        limitRepository.save(limitC);
+        limitRepository.save(limitCpp);
+        limitRepository.save(limitPython);
+    }
+
+    private void saveExamples(Task task, TaskNewDTO taskDTO) {
+        if (taskDTO.getInputs() == null)
+            return;
+        int size = taskDTO.getInputs().size();
+        for (int i = 0; i < size; i++) {
+            Example example = new Example(taskDTO.getInputs().get(i), taskDTO.getOutputs().get(i), task);
+            exampleRepository.save(example);
         }
     }
 
@@ -240,12 +259,22 @@ public class TaskServiceImpl implements TaskService {
 
     private List<LimitDTO> getLimitsDTO(Task task) {
         List<LimitDTO> limits = new ArrayList<>();
-        task.getLimits().forEach(limit -> {
+        task.getLimits().forEach(limit ->
             limits.add(
                     new LimitDTO(limit.getProgramming_language().toString(), limit.getMemory_limit(), limit.getTime_limit())
-            );
-        });
+            )
+        );
         return limits;
+    }
+
+    private List<ExampleDTO> getExamplesDTO(Task task) {
+        List<ExampleDTO> examples = new ArrayList<>();
+        task.getExamples().forEach(example ->
+            examples.add(
+                    new ExampleDTO(example.getInput_data(), example.getOutput_data())
+            )
+        );
+        return examples;
     }
 
     private List<LanguageDTO> getTotalLanguages() {

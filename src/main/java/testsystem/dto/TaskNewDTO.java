@@ -4,14 +4,17 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import testsystem.dto.validator.ExamplesConstraint;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
+@ExamplesConstraint
 public class TaskNewDTO {
 
     @NotNull(message = "Название задачи должно быть задано")
@@ -42,4 +45,8 @@ public class TaskNewDTO {
     @NotEmpty(message = "Доступ к отчету не должен быть пуст")
     @Pattern(regexp = "full_access|no_access", message = "Возможные значения: full_access, no_access")
     private String access_report;
+
+    private List<String> inputs;
+
+    private List<String> outputs;
 }
