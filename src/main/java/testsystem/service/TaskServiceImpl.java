@@ -85,7 +85,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task addTask(TaskNewDTO taskDTO, MultipartFile file) {
+    public Task addTask(TaskNewDTO taskDTO, String[] inputs, String[] outputs, MultipartFile file) {
         String name = taskDTO.getName();
         String description = taskDTO.getDescription();
         String access = taskDTO.getAccess_report();
@@ -102,7 +102,7 @@ public class TaskServiceImpl implements TaskService {
 
         saveTests(saved, tests);
         saveLimits(saved, taskDTO);
-        saveExamples(saved, taskDTO);
+        saveExamples(saved, inputs, outputs);
 
         return taskRepository.findById(saved.getId()).get();
     }
@@ -158,12 +158,12 @@ public class TaskServiceImpl implements TaskService {
         limitRepository.save(limitPython);
     }
 
-    private void saveExamples(Task task, TaskNewDTO taskDTO) {
-        if (taskDTO.getInputs() == null)
-            return;
-        int size = taskDTO.getInputs().size();
+    private void saveExamples(Task task, String[] inputs, String[] outputs) {
+        if (inputs.length != outputs.length)
+            throw new ExampleException();
+        int size = inputs.length;
         for (int i = 0; i < size; i++) {
-            Example example = new Example(taskDTO.getInputs().get(i), taskDTO.getOutputs().get(i), task);
+            Example example = new Example(inputs[i], outputs[i], task);
             exampleRepository.save(example);
         }
     }
