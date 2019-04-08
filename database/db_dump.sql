@@ -243,7 +243,7 @@ CREATE TABLE public.tests (
 
 CREATE TABLE public.user_solutions (
     id uuid NOT NULL,
-    solution_date bigint NOT NULL;
+    solution_date bigint NOT NULL,
     user_id uuid NOT NULL,
     task_id uuid NOT NULL,
     answer_id uuid NOT NULL,
