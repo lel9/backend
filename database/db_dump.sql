@@ -188,8 +188,9 @@ CREATE TABLE public.refresh_tokens (
 CREATE TABLE public.status (
     id uuid NOT NULL,
     result text NOT NULL,
+    passed integer,
     error_test_id uuid,
-    extended_information json
+    extended_information text
 );
 
 
@@ -242,6 +243,7 @@ CREATE TABLE public.tests (
 
 CREATE TABLE public.user_solutions (
     id uuid NOT NULL,
+    solution_date bigint NOT NULL,
     user_id uuid NOT NULL,
     task_id uuid NOT NULL,
     answer_id uuid NOT NULL,

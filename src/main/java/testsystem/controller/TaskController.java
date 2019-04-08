@@ -36,8 +36,10 @@ public class TaskController {
     @PostMapping(value = "/task/add", consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.CREATED)
     public void addTask(@Valid TaskNewDTO taskNewDTO,
+                        @RequestParam(value = "inputs[]", defaultValue = "") String[] inputs,
+                        @RequestParam(value = "ouputs[]", defaultValue = "") String[] outputs,
                         @RequestParam("tests") @Valid @NotNull(message = "Файл с тестами должен быть задан") MultipartFile file) {
-        taskService.addTask(taskNewDTO, file);
+        taskService.addTask(taskNewDTO, inputs, outputs, file);
     }
 
     @PostMapping(value = "/task/solution", consumes = {"multipart/form-data"})

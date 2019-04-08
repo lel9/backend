@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import testsystem.domain.*;
@@ -86,7 +85,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task addTask(TaskNewDTO taskDTO, MultipartFile file) {
+    public Task addTask(TaskNewDTO taskDTO, String[] inputs, String[] outputs, MultipartFile file) {
         String name = taskDTO.getName();
         String description = taskDTO.getDescription();
         String access = taskDTO.getAccess_report();
@@ -103,7 +102,7 @@ public class TaskServiceImpl implements TaskService {
 
         saveTests(saved, tests);
         saveLimits(saved, taskDTO);
-        saveExamples(saved, taskDTO);
+        saveExamples(saved, inputs, outputs);
 
         return taskRepository.findById(saved.getId()).get();
     }
@@ -111,7 +110,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void addSolution(TaskDTO taskDTO, MultipartFile multipartFile) {
 
-        User currentUser = getCurrentUser();
+        User currentUser = userService.getCurrentUser();
+
+        Long date = System.currentTimeMillis();
 
         UUID uuid = validateId(taskDTO.getId());
         Task task = validateTaskExists(uuid);
@@ -120,7 +121,7 @@ public class TaskServiceImpl implements TaskService {
 
         Status status = new Status();
 
-        UserSolution solution = new UserSolution(currentUser, task, answer, status);
+        UserSolution solution = new UserSolution(date, currentUser, task, answer, status);
 
         UserSolution saved = userSolutionRepository.save(solution);
 
@@ -157,12 +158,12 @@ public class TaskServiceImpl implements TaskService {
         limitRepository.save(limitPython);
     }
 
-    private void saveExamples(Task task, TaskNewDTO taskDTO) {
-        if (taskDTO.getInputs() == null)
-            return;
-        int size = taskDTO.getInputs().size();
+    private void saveExamples(Task task, String[] inputs, String[] outputs) {
+        if (inputs.length != outputs.length)
+            throw new ExampleException();
+        int size = inputs.length;
         for (int i = 0; i < size; i++) {
-            Example example = new Example(taskDTO.getInputs().get(i), taskDTO.getOutputs().get(i), task);
+            Example example = new Example(inputs[i], outputs[i], task);
             exampleRepository.save(example);
         }
     }
@@ -319,11 +320,6 @@ public class TaskServiceImpl implements TaskService {
         }
 
         return new Answer(text, language);
-    }
-
-    private User getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userService.findByUsername(username);
     }
 
     private String getExtension(String name) {

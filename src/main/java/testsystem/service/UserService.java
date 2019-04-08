@@ -2,7 +2,10 @@ package testsystem.service;
 
 import testsystem.domain.EmailToken;
 import testsystem.domain.User;
+import testsystem.dto.ResultDTO;
 import testsystem.dto.UserDTO;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -17,4 +20,6 @@ public interface UserService {
     void createEmailToken(User user, String token);
 
     void activateUser(User user);
+
+    List<ResultDTO> getResults();
 }

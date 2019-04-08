@@ -13,7 +13,7 @@ public interface TaskService {
 
     TaskDescriptionDTO getTask(String id);
 
-    Task addTask(TaskNewDTO taskDTO, MultipartFile file);
+    Task addTask(TaskNewDTO taskDTO, String[] inputs, String[] outputs, MultipartFile file);
 
     void addSolution(TaskDTO taskDTO, MultipartFile multipartFile);
 }
