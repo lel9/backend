@@ -76,7 +76,7 @@ public class TaskServiceImpl implements TaskService {
         String name = task.getName();
         String description = task.getDescription();
         String access = task.getReport_permission();
-        TaskCategoryDTO category = getCategoryDTO(task);
+        CategoryDTO category = getCategoryDTO(task);
         List<LanguageDTO> languages = getTotalLanguages();
         List<LimitDTO> limits = getLimitsDTO(task);
         List<ExampleDTO> examples = getExamplesDTO(task);
@@ -250,11 +250,11 @@ public class TaskServiceImpl implements TaskService {
             throw new TaskAlreadyExistsException(name, category.getName());
     }
 
-    private TaskCategoryDTO getCategoryDTO(Task task) {
-        TaskCategoryDTO categoryDTO = null;
+    private CategoryDTO getCategoryDTO(Task task) {
+        CategoryDTO categoryDTO = null;
         Category category = task.getCategory();
         if (category != null)
-            categoryDTO = new TaskCategoryDTO(category.getId().toString(), category.getName());
+            categoryDTO = new CategoryDTO(category.getId().toString(), category.getName(), category.getTasks().size());
         return categoryDTO;
     }
 
