@@ -1,11 +1,8 @@
 package testsystem.service;
 
 import testsystem.domain.User;
-<<<<<<< HEAD
-import testsystem.dto.ResultDTO;
-=======
 import testsystem.dto.EmailTokenDTO;
->>>>>>> refactoring, integration tests
+import testsystem.dto.ResultDTO;
 import testsystem.dto.UserDTO;
 
 import java.util.List;

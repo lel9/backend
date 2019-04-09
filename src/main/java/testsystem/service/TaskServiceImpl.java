@@ -48,6 +48,10 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private TestsystemService testsystemService;
 
+    public void setTestsystemService(TestsystemService service) {
+        testsystemService = service;
+    }
+
     @Override
     public TaskListDTO getTasksList(String id, int page, int limit, boolean categorized) {
         Category category = null;
@@ -272,11 +276,13 @@ public class TaskServiceImpl implements TaskService {
 
     private List<ExampleDTO> getExamplesDTO(Task task) {
         List<ExampleDTO> examples = new ArrayList<>();
-        task.getExamples().forEach(example ->
-            examples.add(
-                    new ExampleDTO(example.getInput_data(), example.getOutput_data())
-            )
-        );
+        if (task.getExamples() != null) {
+            task.getExamples().forEach(example ->
+                    examples.add(
+                            new ExampleDTO(example.getInput_data(), example.getOutput_data())
+                    )
+            );
+        }
         return examples;
     }
 

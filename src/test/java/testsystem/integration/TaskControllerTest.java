@@ -4,6 +4,7 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,8 @@ import testsystem.domain.ProgrammingLanguage;
 import testsystem.domain.Task;
 import testsystem.repository.CategoryRepository;
 import testsystem.repository.TaskRepository;
+import testsystem.service.TaskServiceImpl;
+import testsystem.service.TestsystemService;
 
 import javax.servlet.Filter;
 import java.io.File;
@@ -58,6 +61,9 @@ public class TaskControllerTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private TaskServiceImpl taskService;
+
     private MockMvc mvc;
 
     @Before
@@ -68,6 +74,7 @@ public class TaskControllerTest {
                 .build();
 
         categoryRepository.deleteAll();
+        taskRepository.deleteAll();
 
     }
 
@@ -266,5 +273,53 @@ public class TaskControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.type", Matchers.is("NoSuchTask")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Задача не найдена")));
+    }
+
+    @Test
+    public void sendSolutionSuccess() throws Exception {
+        TestsystemService mock = Mockito.mock(TestsystemService.class);
+        Mockito.when(mock.sendRequestToTestingServer(Mockito.anyString())).thenReturn(200);
+
+        taskService.setTestsystemService(mock);
+
+        Task task = taskRepository.save(new Task("task1", "decs1", "no_access", null));
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(Objects.requireNonNull(classLoader.getResource("ok.py")).getFile());
+
+        FileInputStream fi1 = new FileInputStream(file);
+        MockMultipartFile fstmp = new MockMultipartFile("solution", file.getName(), "multipart/form-data", fi1);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("id", task.getId().toString());
+
+        mvc.perform(Utils.makeMultipartRequest("/task/solution", fstmp, params))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+
+    }
+
+    @Test
+    public void sendSolutionFail() throws Exception {
+        TestsystemService mock = Mockito.mock(TestsystemService.class);
+        Mockito.when(mock.sendRequestToTestingServer(Mockito.anyString())).thenReturn(200);
+
+        taskService.setTestsystemService(mock);
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(Objects.requireNonNull(classLoader.getResource("ok.py")).getFile());
+
+        FileInputStream fi1 = new FileInputStream(file);
+        MockMultipartFile fstmp = new MockMultipartFile("solution", file.getName(), "multipart/form-data", fi1);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("id", UUID.randomUUID().toString());
+
+        mvc.perform(Utils.makeMultipartRequest("/task/solution", fstmp, params))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.type", Matchers.is("NoSuchTask")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Задача не найдена")));;
+
     }
 }

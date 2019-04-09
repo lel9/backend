@@ -39,6 +39,9 @@ public class Task {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "task", orphanRemoval = true)
     private List<Example> examples;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "task", orphanRemoval = true)
+    private List<UserSolution> solutions;
+
     public Task(String name, String description, String report_permission, Category category) {
         this.name = name;
         this.description = description;

@@ -125,6 +125,30 @@ public class CategoryControllerTest {
     }
 
     @Test
+    public void deleteCategorySuccess() throws Exception {
+        Category save = categoryRepository.save(new Category("name"));
+        CategoryDTO categoryDTO = new CategoryDTO(save.getId().toString(), null);
+
+        this.mvc.perform(Utils.makePostRequest("/category/delete", categoryDTO))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        Assert.assertFalse(categoryRepository.findById(save.getId()).isPresent());
+    }
+
+    @Test
+    public void deleteCategoryFail() throws Exception {
+        CategoryDTO categoryDTO = new CategoryDTO(UUID.randomUUID().toString(), null);
+
+        this.mvc.perform(Utils.makePostRequest("/category/delete", categoryDTO))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.type", Matchers.is("NoSuchCategory")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Категория не найдена")));;
+
+    }
+
+    @Test
     public void getCategoryListEmpty() throws Exception {
         this.mvc.perform(Utils.makeGetRequest("/category/list"))
                 .andDo(MockMvcResultHandlers.print())

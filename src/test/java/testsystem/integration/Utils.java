@@ -18,11 +18,14 @@ public class Utils {
     public static final MediaType APPLICATION_JSON_UTF8 =
             new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
+    public static final String USERNAME = "usname";
+    public static final String PASSWORD = "123456";
+
     public static MockHttpServletRequestBuilder makePostRequest(String route, Object body) throws JsonProcessingException {
         return MockMvcRequestBuilders
                 .post(route)
-                .with(SecurityMockMvcRequestPostProcessors.user("usname")
-                        .password("123456")
+                .with(SecurityMockMvcRequestPostProcessors.user(USERNAME)
+                        .password(PASSWORD)
                         .roles("ADMIN")
                         .authorities(UserRole.admin))
                 .with(SecurityMockMvcRequestPostProcessors.csrf().asHeader())
@@ -33,8 +36,8 @@ public class Utils {
     public static MockHttpServletRequestBuilder makeGetRequest(String route) {
         return MockMvcRequestBuilders
                 .get(route)
-                .with(SecurityMockMvcRequestPostProcessors.user("usname")
-                        .password("123456")
+                .with(SecurityMockMvcRequestPostProcessors.user(USERNAME)
+                        .password(PASSWORD)
                         .roles("ADMIN")
                         .authorities(UserRole.admin))
                 .with(SecurityMockMvcRequestPostProcessors.csrf().asHeader());
@@ -47,8 +50,8 @@ public class Utils {
                 .multipart(route)
                 .file(multipartFile)
                 .params(params)
-                .with(SecurityMockMvcRequestPostProcessors.user("usname")
-                        .password("123456")
+                .with(SecurityMockMvcRequestPostProcessors.user(USERNAME)
+                        .password(PASSWORD)
                         .roles("ADMIN")
                         .authorities(UserRole.admin))
                 .with(SecurityMockMvcRequestPostProcessors.csrf().asHeader())
