@@ -5,8 +5,7 @@ services:
   - postgresql
 before_script:
   - export TZ=Europe/Moscow
-script:
-  - database/db_dump.sql
+  - psql -U postgres -f database/db_dump.sql
 branches:
   only:
     - master
