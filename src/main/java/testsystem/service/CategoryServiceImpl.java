@@ -1,17 +1,10 @@
 package testsystem.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import testsystem.domain.Category;
-import testsystem.domain.Task;
 import testsystem.dto.CategoryDTO;
 import testsystem.dto.CategoryListDTO;
-import testsystem.dto.TaskDTO;
-import testsystem.dto.TaskListDTO;
 import testsystem.exception.CategoryAlreadyExistsException;
 import testsystem.exception.NoSuchCategoryException;
 import testsystem.repository.CategoryRepository;
@@ -48,28 +41,12 @@ public class CategoryServiceImpl implements CategoryService {
                 new CategoryDTO(
                         category.getId().toString(),
                         category.getName(),
-                        category.getTasks().size()
+                        category.getTasks() == null ? 0 : category.getTasks().size()
                 )
         ));
 
         return new CategoryListDTO(list);
 
-    }
-
-    @Override
-    public TaskListDTO getTasksList(String id, int page, int limit) {
-        UUID uuid = validateId(id);
-        Category category = validateCategoryExists(uuid);
-
-        Pageable pageableRequest = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "name"));
-        Page<Task> tasks = taskRepository.findByCategory(category, pageableRequest);
-
-        List<TaskDTO> list = new ArrayList<>();
-        tasks.forEach(task -> list.add(
-                new TaskDTO(task.getId().toString(), task.getName())
-        ));
-
-        return new TaskListDTO(tasks.getTotalPages(), category.getName(), list);
     }
 
     @Override
@@ -87,6 +64,10 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(CategoryDTO categoryDTO) {
         UUID uuid = validateId(categoryDTO.getId());
         Category category = validateCategoryExists(uuid);
+        taskRepository.findByCategory(category).forEach(task -> {
+            task.setCategory(null);
+            taskRepository.save(task);
+        });
         categoryRepository.delete(category);
     }
 

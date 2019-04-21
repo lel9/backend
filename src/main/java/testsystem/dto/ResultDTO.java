@@ -3,12 +3,15 @@ package testsystem.dto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-public class TaskCategoryDTO {
-    private String id;
+public class ResultDTO {
     private String name;
+    private String id;
+    private Integer total;
+    private Integer passed;
+    private String result;
+    private String message;
+    private Long date;
 }

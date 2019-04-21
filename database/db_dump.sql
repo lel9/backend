@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.7
+-- Dumped from database version 10.7 (Ubuntu 10.7-0ubuntu0.18.04.1)
 -- Dumped by pg_dump version 10.7
 
--- Started on 2019-03-29 22:50:34 MSK
+-- Started on 2019-04-05 10:49:13 MSK
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -19,14 +19,11 @@ SET row_security = off;
 
 DROP DATABASE ejudge;
 --
--- TOC entry 2927 (class 1262 OID 16822)
+-- TOC entry 3018 (class 1262 OID 16384)
 -- Name: ejudge; Type: DATABASE; Schema: -; Owner: -
 --
 
-CREATE DATABASE ejudge WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
-
-
-\connect ejudge
+CREATE DATABASE ejudge WITH TEMPLATE = template0 ENCODING = 'UTF8';
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -38,8 +35,15 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
+
+CREATE USER admin with encrypted password 'admin';
+
+GRANT ALL PRIVILEGES on database ejudge to admin;
+
+\connect ejudge admin
+
 --
--- TOC entry 1 (class 3079 OID 12964)
+-- TOC entry 1 (class 3079 OID 13041)
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -47,7 +51,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- TOC entry 2930 (class 0 OID 0)
+-- TOC entry 3021 (class 0 OID 0)
 -- Dependencies: 1
 -- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
 --
@@ -56,7 +60,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
--- TOC entry 642 (class 1247 OID 17212)
+-- TOC entry 517 (class 1247 OID 16386)
 -- Name: progr_type; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -68,7 +72,7 @@ CREATE TYPE public.progr_type AS ENUM (
 
 
 --
--- TOC entry 515 (class 1247 OID 16832)
+-- TOC entry 520 (class 1247 OID 16394)
 -- Name: role_type; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -79,7 +83,7 @@ CREATE TYPE public.role_type AS ENUM (
 
 
 --
--- TOC entry 597 (class 1247 OID 16838)
+-- TOC entry 602 (class 1247 OID 16400)
 -- Name: sex_type; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -94,7 +98,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 196 (class 1259 OID 16845)
+-- TOC entry 196 (class 1259 OID 16405)
 -- Name: answers; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -106,7 +110,7 @@ CREATE TABLE public.answers (
 
 
 --
--- TOC entry 197 (class 1259 OID 16853)
+-- TOC entry 197 (class 1259 OID 16411)
 -- Name: categories; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -117,7 +121,7 @@ CREATE TABLE public.categories (
 
 
 --
--- TOC entry 206 (class 1259 OID 16987)
+-- TOC entry 198 (class 1259 OID 16417)
 -- Name: email_tokens; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -130,7 +134,20 @@ CREATE TABLE public.email_tokens (
 
 
 --
--- TOC entry 198 (class 1259 OID 16873)
+-- TOC entry 207 (class 1259 OID 16549)
+-- Name: example_tests; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.example_tests (
+    id uuid NOT NULL,
+    input_data text,
+    output_data text,
+    task_id uuid
+);
+
+
+--
+-- TOC entry 199 (class 1259 OID 16423)
 -- Name: profiles; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -144,7 +161,19 @@ CREATE TABLE public.profiles (
 
 
 --
--- TOC entry 205 (class 1259 OID 16974)
+-- TOC entry 208 (class 1259 OID 16557)
+-- Name: queue; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.queue (
+    id uuid NOT NULL,
+    solution_id uuid,
+    unixtime bigint
+);
+
+
+--
+-- TOC entry 200 (class 1259 OID 16429)
 -- Name: refresh_tokens; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -156,20 +185,21 @@ CREATE TABLE public.refresh_tokens (
 
 
 --
--- TOC entry 199 (class 1259 OID 16879)
+-- TOC entry 201 (class 1259 OID 16435)
 -- Name: status; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.status (
     id uuid NOT NULL,
     result text NOT NULL,
+    passed integer,
     error_test_id uuid,
-    extended_information json
+    extended_information text
 );
 
 
 --
--- TOC entry 200 (class 1259 OID 16885)
+-- TOC entry 202 (class 1259 OID 16441)
 -- Name: task_limits; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -183,7 +213,7 @@ CREATE TABLE public.task_limits (
 
 
 --
--- TOC entry 201 (class 1259 OID 16888)
+-- TOC entry 203 (class 1259 OID 16444)
 -- Name: tasks; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -192,13 +222,13 @@ CREATE TABLE public.tasks (
     name text NOT NULL,
     description text,
     report_permission text NOT NULL,
-    category_id uuid NOT NULL,
-    owner_id uuid NOT NULL
+    category_id uuid,
+    owner_id uuid
 );
 
 
 --
--- TOC entry 202 (class 1259 OID 16894)
+-- TOC entry 204 (class 1259 OID 16450)
 -- Name: tests; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -211,12 +241,13 @@ CREATE TABLE public.tests (
 
 
 --
--- TOC entry 203 (class 1259 OID 16900)
+-- TOC entry 205 (class 1259 OID 16456)
 -- Name: user_solutions; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.user_solutions (
     id uuid NOT NULL,
+    solution_date bigint NOT NULL,
     user_id uuid NOT NULL,
     task_id uuid NOT NULL,
     answer_id uuid NOT NULL,
@@ -225,7 +256,7 @@ CREATE TABLE public.user_solutions (
 
 
 --
--- TOC entry 204 (class 1259 OID 16903)
+-- TOC entry 206 (class 1259 OID 16459)
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -241,7 +272,7 @@ CREATE TABLE public.users (
 
 
 --
--- TOC entry 2768 (class 2606 OID 16910)
+-- TOC entry 2854 (class 2606 OID 16466)
 -- Name: answers answers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -250,7 +281,7 @@ ALTER TABLE ONLY public.answers
 
 
 --
--- TOC entry 2765 (class 2606 OID 16911)
+-- TOC entry 2852 (class 2606 OID 16467)
 -- Name: profiles birthday_check; Type: CHECK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -259,7 +290,7 @@ ALTER TABLE public.profiles
 
 
 --
--- TOC entry 2770 (class 2606 OID 16913)
+-- TOC entry 2856 (class 2606 OID 16469)
 -- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -268,7 +299,7 @@ ALTER TABLE ONLY public.categories
 
 
 --
--- TOC entry 2766 (class 2606 OID 17000)
+-- TOC entry 2851 (class 2606 OID 16470)
 -- Name: email_tokens creation_date_check; Type: CHECK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -277,7 +308,7 @@ ALTER TABLE public.email_tokens
 
 
 --
--- TOC entry 2788 (class 2606 OID 16994)
+-- TOC entry 2858 (class 2606 OID 16472)
 -- Name: email_tokens email_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -286,7 +317,16 @@ ALTER TABLE ONLY public.email_tokens
 
 
 --
--- TOC entry 2772 (class 2606 OID 16915)
+-- TOC entry 2876 (class 2606 OID 16556)
+-- Name: example_tests example_tests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.example_tests
+    ADD CONSTRAINT example_tests_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2860 (class 2606 OID 16474)
 -- Name: profiles profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -295,7 +335,16 @@ ALTER TABLE ONLY public.profiles
 
 
 --
--- TOC entry 2786 (class 2606 OID 16981)
+-- TOC entry 2878 (class 2606 OID 16561)
+-- Name: queue queue_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.queue
+    ADD CONSTRAINT queue_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2862 (class 2606 OID 16476)
 -- Name: refresh_tokens refresh_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -304,7 +353,7 @@ ALTER TABLE ONLY public.refresh_tokens
 
 
 --
--- TOC entry 2774 (class 2606 OID 16917)
+-- TOC entry 2864 (class 2606 OID 16478)
 -- Name: status status_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -313,7 +362,7 @@ ALTER TABLE ONLY public.status
 
 
 --
--- TOC entry 2776 (class 2606 OID 16919)
+-- TOC entry 2866 (class 2606 OID 16480)
 -- Name: task_limits task_limits_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -322,7 +371,7 @@ ALTER TABLE ONLY public.task_limits
 
 
 --
--- TOC entry 2778 (class 2606 OID 16921)
+-- TOC entry 2868 (class 2606 OID 16482)
 -- Name: tasks tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -331,7 +380,7 @@ ALTER TABLE ONLY public.tasks
 
 
 --
--- TOC entry 2780 (class 2606 OID 16923)
+-- TOC entry 2870 (class 2606 OID 16484)
 -- Name: tests tests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -340,7 +389,7 @@ ALTER TABLE ONLY public.tests
 
 
 --
--- TOC entry 2782 (class 2606 OID 16925)
+-- TOC entry 2872 (class 2606 OID 16486)
 -- Name: user_solutions user_solutions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -349,7 +398,7 @@ ALTER TABLE ONLY public.user_solutions
 
 
 --
--- TOC entry 2784 (class 2606 OID 16927)
+-- TOC entry 2874 (class 2606 OID 16488)
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -358,7 +407,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 2794 (class 2606 OID 16928)
+-- TOC entry 2886 (class 2606 OID 16489)
 -- Name: user_solutions answer_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -367,7 +416,7 @@ ALTER TABLE ONLY public.user_solutions
 
 
 --
--- TOC entry 2791 (class 2606 OID 16933)
+-- TOC entry 2883 (class 2606 OID 16494)
 -- Name: tasks category_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -376,7 +425,7 @@ ALTER TABLE ONLY public.tasks
 
 
 --
--- TOC entry 2789 (class 2606 OID 16938)
+-- TOC entry 2881 (class 2606 OID 16499)
 -- Name: status error_test_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -385,7 +434,7 @@ ALTER TABLE ONLY public.status
 
 
 --
--- TOC entry 2792 (class 2606 OID 17219)
+-- TOC entry 2884 (class 2606 OID 16504)
 -- Name: tasks owner_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -394,7 +443,7 @@ ALTER TABLE ONLY public.tasks
 
 
 --
--- TOC entry 2798 (class 2606 OID 16943)
+-- TOC entry 2890 (class 2606 OID 16509)
 -- Name: users profile_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -403,7 +452,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 2795 (class 2606 OID 16948)
+-- TOC entry 2887 (class 2606 OID 16514)
 -- Name: user_solutions status_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -412,7 +461,7 @@ ALTER TABLE ONLY public.user_solutions
 
 
 --
--- TOC entry 2793 (class 2606 OID 16953)
+-- TOC entry 2885 (class 2606 OID 16519)
 -- Name: tests task_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -421,7 +470,7 @@ ALTER TABLE ONLY public.tests
 
 
 --
--- TOC entry 2796 (class 2606 OID 16963)
+-- TOC entry 2888 (class 2606 OID 16524)
 -- Name: user_solutions task_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -430,7 +479,7 @@ ALTER TABLE ONLY public.user_solutions
 
 
 --
--- TOC entry 2790 (class 2606 OID 17206)
+-- TOC entry 2882 (class 2606 OID 16529)
 -- Name: task_limits task_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -439,7 +488,16 @@ ALTER TABLE ONLY public.task_limits
 
 
 --
--- TOC entry 2797 (class 2606 OID 16968)
+-- TOC entry 2891 (class 2606 OID 16562)
+-- Name: example_tests task_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.example_tests
+    ADD CONSTRAINT task_id_fk FOREIGN KEY (task_id) REFERENCES public.tasks(id);
+
+
+--
+-- TOC entry 2889 (class 2606 OID 16534)
 -- Name: user_solutions user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -448,7 +506,7 @@ ALTER TABLE ONLY public.user_solutions
 
 
 --
--- TOC entry 2799 (class 2606 OID 16982)
+-- TOC entry 2880 (class 2606 OID 16539)
 -- Name: refresh_tokens user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -457,7 +515,7 @@ ALTER TABLE ONLY public.refresh_tokens
 
 
 --
--- TOC entry 2800 (class 2606 OID 16995)
+-- TOC entry 2879 (class 2606 OID 16544)
 -- Name: email_tokens user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -466,15 +524,38 @@ ALTER TABLE ONLY public.email_tokens
 
 
 --
--- TOC entry 2929 (class 0 OID 0)
+-- TOC entry 3020 (class 0 OID 0)
 -- Dependencies: 6
 -- Name: SCHEMA public; Type: ACL; Schema: -; Owner: -
 --
 
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
+INSERT INTO public.profiles VALUES('ab598598-e12e-4f3d-be82-40ba87ed58ad', NULL, NULL, NULL, NULL);
+INSERT INTO public.profiles VALUES('72c3c2cd-a431-4cd8-8eca-9e7aad115159', NULL, NULL, NULL, NULL);
 
--- Completed on 2019-03-29 22:50:34 MSK
+INSERT INTO public.users
+    VALUES('56b65658-418a-4c16-9723-384a40937f0d',
+           'admin',
+           '$2a$10$rjzb.C62wmsvQiMtNdFwcOL.MVJKYomy4CwhTAaOidpOsULlEDcMm',
+           'mail@mail',
+           'ab598598-e12e-4f3d-be82-40ba87ed58ad',
+           'admin',
+           true);
+
+
+
+INSERT INTO public.users
+    VALUES('8100ffac-0f55-4c37-b0c6-6e13df640c47',
+           'user',
+           '$2a$10$rjzb.C62wmsvQiMtNdFwcOL.MVJKYomy4CwhTAaOidpOsULlEDcMm',
+           'mail@mail',
+           '72c3c2cd-a431-4cd8-8eca-9e7aad115159',
+           'user',
+           true);
+
+
+-- Completed on 2019-04-05 10:49:13 MSK
 
 --
 -- PostgreSQL database dump complete

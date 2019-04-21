@@ -1,31 +1,25 @@
 package testsystem.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tests")
+@Table(name = "answers")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC, force = true)
-public class Test {
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+public class Answer {
     @Id
     @GeneratedValue
     private final UUID id = UUID.randomUUID();
 
-    private String input_data;
+    private String program_text;
 
-    private String output_data;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "task_id")
-    private Task task;
-
+    @Enumerated(EnumType.STRING)
+    private ProgrammingLanguage programming_language;
 }

@@ -57,9 +57,21 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler({UnknownLanguageException.class})
+    public ResponseEntity<Object> handleUnknownLanguage(final RuntimeException ex, final WebRequest request) {
+        final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "UnknownLanguage");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
     @ExceptionHandler({ZipFileException.class})
     public ResponseEntity<Object> TestFileZip(final RuntimeException ex, final WebRequest request) {
         final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "ZipError");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({ ExampleException.class })
+    public ResponseEntity<Object> handleExampleException(final RuntimeException ex, final WebRequest request) {
+        final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "ExampleError");
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
@@ -96,16 +108,23 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     // 500
-    @ExceptionHandler({ TestFileIOException.class })
-    public ResponseEntity<Object> TestFileIO(final RuntimeException ex, final WebRequest request) {
+    @ExceptionHandler({ TestFileIOException.class, SolutionFileIOError.class })
+    public ResponseEntity<Object> handleTestFileIO(final RuntimeException ex, final WebRequest request) {
         final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "IOError");
-        return new ResponseEntity<Object>(bodyOfResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(bodyOfResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler({ TestsystemRequestException.class })
+    public ResponseEntity<Object> handleTestsystemRequest(final RuntimeException ex, final WebRequest request) {
+        final GenericResponse bodyOfResponse = new GenericResponse(ex.getMessage(), "TestServerError");
+        return new ResponseEntity<>(bodyOfResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({ Exception.class })
     public ResponseEntity<Object> handleInternal(final RuntimeException ex, final WebRequest request) {
+        ex.printStackTrace();
         final GenericResponse bodyOfResponse = new GenericResponse("Внутренняя ошибка сервера", "InternalError");
-        return new ResponseEntity<Object>(bodyOfResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(bodyOfResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
